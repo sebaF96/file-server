@@ -2,7 +2,7 @@
 
 import getopt
 import sys
-import controllers.Client as cl
+import models
 
 
 def read_options():
@@ -27,5 +27,5 @@ def read_options():
 
 if __name__ == '__main__':
     address, port = read_options()
-    client = cl.Client(address, port)
+    client = models.Client(address, port)
     client.run()

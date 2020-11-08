@@ -2,4 +2,4 @@
 venv/
 client/__pycache__/*
 server/__pycache__/*
-client/controllers/__pycache__/*
+client/models/__pycache__/*
