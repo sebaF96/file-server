@@ -8,7 +8,7 @@ class Client:
         self.__socket.connect((address, port))
         print(f"Connected to File Server at {address} on port {port}")
 
-        self.__COMMANDS = {'pwd': self.pwd, 'lpwd': self.lpwd}
+        self.__COMMANDS = {'pwd': self.pwd, 'lpwd': self.lpwd, 'ls': self.ls}
         self.__COMMANDS_ARGS = {'lcd': self.lcd}
 
     def run(self):
@@ -29,6 +29,9 @@ class Client:
     def socket(self):
         return self.__socket
 
+    def send(self, content: str):
+        self.__socket.send(content.encode())
+
     @staticmethod
     def lpwd():
         print(os.getcwd())
@@ -38,11 +41,16 @@ class Client:
         os.chdir(route)
 
     def pwd(self):
-        self.__socket.send('pwd'.encode())
+        self.send('pwd')
         answer = self.__socket.recv(1024).decode()
         print(answer)
 
     def cd(self, route):
-        self.__socket.send(f'cd {route}'.encode())
+        self.send(f'cd {route}')
         answer = self.__socket.recv(1024).decode()
+        print(answer)
+
+    def ls(self):
+        self.send('ls')
+        answer = self.__socket.recv(2048).decode()
         print(answer)
