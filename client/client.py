@@ -28,3 +28,4 @@ def read_options():
 if __name__ == '__main__':
     address, port = read_options()
     client = cl.Client(address, port)
+    client.run()

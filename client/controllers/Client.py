@@ -8,13 +8,30 @@ class Client:
         self.__socket.connect((address, port))
         print(f"Connected to File Server at {address} on port {port}")
 
+        self.__COMMANDS = {'pwd': self.pwd, 'lpwd': self.lpwd}
+        self.__COMMANDS_ARGS = {'lcd': self.lcd}
+
+    def run(self):
+        while True:
+            user_input = input("> ").split()
+
+            if user_input[0] not in self.__COMMANDS and user_input[0] not in self.__COMMANDS_ARGS:
+                print("Command not recognized")
+                continue
+
+            elif user_input[0] in self.__COMMANDS:
+                self.__COMMANDS[user_input[0]]()
+
+            elif user_input[0] in self.__COMMANDS_ARGS:
+                self.__COMMANDS_ARGS[user_input[0]](user_input[1])
+
     @property
     def socket(self):
         return self.__socket
 
     @staticmethod
     def lpwd():
-        print(os.curdir)
+        print(os.getcwd())
 
     @staticmethod
     def lcd(route):
