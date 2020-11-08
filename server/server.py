@@ -3,6 +3,7 @@
 import getopt
 import sys
 import socket
+import src
 
 
 def read_port():
@@ -29,3 +30,5 @@ if __name__ == '__main__':
         server_socket.listen(16)
         client_socket, address = server_socket.accept()
         print('\nGot a connection from', address)
+        conn = src.Connection(client_socket, address)
+        conn.start()

@@ -39,10 +39,10 @@ class Client:
 
     def pwd(self):
         self.__socket.send('pwd'.encode())
-        answer = self.__socket.recv(1024)
+        answer = self.__socket.recv(1024).decode()
         print(answer)
 
     def cd(self, route):
         self.__socket.send(f'cd {route}'.encode())
-        answer = self.__socket.recv(1024)
+        answer = self.__socket.recv(1024).decode()
         print(answer)
