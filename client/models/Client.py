@@ -8,14 +8,15 @@ class Client:
         self.__socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         self.__socket.connect((address, port))
         print(f"Connected to File Server at {address} on port {port}")
+        self.__prompt = f"\033[1;34mfile-server@{address}$\033[0m "
 
         self.__REMOTE_COMMANDS = ['pwd', 'cd', 'ls']
-        self.__COMMANDS = {'lpwd': self.lpwd, 'lls': self.lls}
+        self.__COMMANDS = {'lpwd': self.lpwd, 'lls': self.lls, 'exit': self.disconnect, 'help': self.show_help}
         self.__COMMANDS_ARGS = {'lcd': self.lcd, 'lls': self.lls}
 
     def run(self):
         while True:
-            user_input = input("> ").split()
+            user_input = input(self.__prompt).split()
             has_argument = len(user_input) == 2
             command = user_input[0]
             argument = user_input[1] if has_argument else None
@@ -71,18 +72,11 @@ class Client:
         except FileNotFoundError:
             print("No such directory")
 
-    """ Remote commands """
-    def pwd(self):
-        self.send('pwd')
-        answer = self.__socket.recv(1024).decode()
-        print(answer)
+    def disconnect(self):
+        self.__socket.close()
+        print("Disconnected from file-server")
+        exit(0)
 
-    def cd(self, route):
-        self.send(f'cd {route}')
-        answer = self.__socket.recv(1024).decode()
-        print(answer)
-
-    def ls(self):
-        self.send('ls')
-        answer = self.__socket.recv(2048).decode()
-        print(answer)
+    @staticmethod
+    def show_help():
+        ...

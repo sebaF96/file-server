@@ -4,7 +4,7 @@ import getopt
 import sys
 import socket
 import src
-import threading
+import multiprocessing
 
 
 def read_port():
@@ -22,6 +22,7 @@ def attend_client(client_socket, address):
     print('\nGot a connection from', address)
     conn = src.Connection(client_socket, address)
     conn.start()
+    print(f"Client {address} disconnected")
 
 
 def main():
@@ -36,7 +37,7 @@ def main():
     while True:
         server_socket.listen(16)
         client_socket, address = server_socket.accept()
-        th = threading.Thread(target=attend_client, args=(client_socket, address))
+        th = multiprocessing.Process(target=attend_client, args=(client_socket, address))
         th.start()
 
 

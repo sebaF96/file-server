@@ -6,15 +6,19 @@ class Connection:
     def __init__(self, client_socket, client_address):
         self.__client_socket = client_socket
         self.__client_address = client_address
-        self.__COMMANDS = {'pwd': self.pwd, 'ls': self.ls, 'exit': self.disconnect}
+        self.__COMMANDS = {'pwd': self.pwd, 'ls': self.ls}
         self.__COMMANDS_ARGS = {'cd': self.cd, 'ls': self.ls}
 
-    def attend(self):
+    def start(self):
         while True:
+            client_datagram = self.__client_socket.recv(2048).decode()
+            if not client_datagram:
+                break
+
             try:
-                client_json = json.loads(self.__client_socket.recv(2048).decode())
+                client_json = json.loads(client_datagram)
                 command, argument = client_json["command"], client_json["argument"]
-            except KeyError or json.JSONDecodeError:
+            except json.decoder.JSONDecodeError:
                 self.send_response(500, "Invalid command format, it doesn't respect the protocol")
                 continue
 
@@ -56,7 +60,3 @@ class Connection:
         except FileNotFoundError:
             self.send_response(500, "No such directory")
 
-    def disconnect(self):
-        print(f'Client {self.__client_address} disconnected')
-        self.__client_socket.close()
-        exit(0)
