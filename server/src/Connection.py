@@ -12,7 +12,7 @@ class Connection:
     def attend(self):
         while True:
             try:
-                client_json = json.loads(self.__client_socket.recv(1024).decode())
+                client_json = json.loads(self.__client_socket.recv(2048).decode())
                 command, argument = client_json["command"], client_json["argument"]
             except KeyError or json.JSONDecodeError:
                 self.send_response(500, "Invalid command format, it doesn't respect the protocol")
@@ -23,6 +23,9 @@ class Connection:
 
             elif command in self.__COMMANDS_ARGS and argument:
                 self.__COMMANDS_ARGS[command](argument)
+
+            else:
+                self.send_response(500, "Invalid command or argument(s)")
 
     def send_response(self, status_code, status_message, content=None):
         response = {
