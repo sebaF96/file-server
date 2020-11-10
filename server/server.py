@@ -26,7 +26,7 @@ def attend_client(client_socket, address):
 
 
 def main():
-    local_address = socket.gethostbyname(socket.getfqdn())
+    local_address = socket.gethostbyname(socket.getfqdn() + ".local")
     port = read_port()
 
     server_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)

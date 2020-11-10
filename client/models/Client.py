@@ -9,6 +9,7 @@ class Client:
         self.__socket.connect((address, port))
         print(f"Connected to File Server at {address} on port {port}")
         self.__prompt = f"\033[1;36mfile-server@{address}\033[0m$ "
+        os.chdir(os.getenv("HOME", default="/"))
 
         self.__REMOTE_COMMANDS = ['pwd', 'cd', 'ls']
         self.__COMMANDS = {'lpwd': self.lpwd, 'lls': self.lls, 'exit': self.disconnect, 'help': self.show_help, 'clear': self.clear}
