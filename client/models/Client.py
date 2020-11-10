@@ -11,9 +11,9 @@ class Client:
         self.__prompt = f"\033[1;36mfile-server@{address}\033[0m$ "
         os.chdir(os.getenv("HOME", default="/"))
 
-        self.__REMOTE_COMMANDS = ['pwd', 'cd', 'ls']
+        self.__REMOTE_COMMANDS = ['pwd', 'cd', 'ls', 'mkdir']
         self.__COMMANDS = {'lpwd': self.lpwd, 'lls': self.lls, 'exit': self.disconnect, 'help': self.show_help, 'clear': self.clear}
-        self.__COMMANDS_ARGS = {'lcd': self.lcd, 'lls': self.lls}
+        self.__COMMANDS_ARGS = {'lcd': self.lcd, 'lls': self.lls, 'lmkdir': self.lmkdir}
 
     def run(self):
         while True:
@@ -60,7 +60,7 @@ class Client:
         print(os.getcwd())
 
     @staticmethod
-    def lcd(directory):
+    def lcd(directory: str):
         try:
             os.chdir(directory)
         except FileNotFoundError:
@@ -74,6 +74,13 @@ class Client:
             print(content)
         except FileNotFoundError:
             print("No such directory")
+
+    @staticmethod
+    def lmkdir(directory: str):
+        try:
+            os.mkdir(directory)
+        except FileExistsError:
+            print("Directory already exists")
 
     @staticmethod
     def clear():

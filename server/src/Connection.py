@@ -9,7 +9,7 @@ class Connection:
         os.chdir(os.getenv("HOME", default="/home"))
 
         self.__COMMANDS = {'pwd': self.pwd, 'ls': self.ls}
-        self.__COMMANDS_ARGS = {'cd': self.cd, 'ls': self.ls}
+        self.__COMMANDS_ARGS = {'cd': self.cd, 'ls': self.ls, 'mkdir': self.mkdir}
 
     def start(self):
         while True:
@@ -61,4 +61,11 @@ class Connection:
             self.send_response(200, "OK")
         except FileNotFoundError:
             self.send_response(500, "No such directory")
+
+    def mkdir(self, directory: str):
+        try:
+            os.mkdir(directory)
+            self.send_response(200, "OK")
+        except FileExistsError:
+            self.send_response(500, "Directory already exists")
 
