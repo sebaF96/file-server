@@ -36,7 +36,7 @@ def attend_client(client_socket, address) -> None:
     print(f"Client {address} disconnected")
 
 
-def listen_for_transfers(transfer_socket: socket.socket, local_address: str, transfer_port: int) -> None:
+def listen_for_transfers(transfer_socket: socket.socket, transfer_port: int) -> None:
     print(f"Listening for transfers on port {transfer_port}")
     while True:
         transfer_socket.listen(16)
@@ -56,7 +56,7 @@ def main() -> None:
 
     print(f"Server started at {local_address}")
     print(f"Listening for connections at port {main_port}")
-    threading.Thread(target=listen_for_transfers, args=(transfer_socket, local_address, transfer_port), daemon=True).start()
+    threading.Thread(target=listen_for_transfers, args=(transfer_socket, transfer_port), daemon=True).start()
     print('Waiting for connections...')
 
     while True:
