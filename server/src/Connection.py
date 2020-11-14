@@ -11,7 +11,7 @@ class Connection:
         os.chdir(os.getenv("HOME", default="/home"))
 
         self.__COMMANDS = {'pwd': self.pwd, 'ls': self.ls}
-        self.__COMMANDS_ARGS = {'cd': self.cd, 'ls': self.ls, 'mkdir': self.mkdir, 'get': self.get}
+        self.__COMMANDS_ARGS = {'cd': self.cd, 'ls': self.ls, 'mkdir': self.mkdir, 'get': self.get, 'put': self.put}
 
     def start(self):
         while True:
@@ -89,11 +89,11 @@ class Connection:
         else:
             absolute_path = os.path.abspath(filename)
             filesize = os.path.getsize(filename)
-            self.allow_transfer(operation="GET", absolute_path=absolute_path, filesize=filesize)
+            self.allow_transfer(operation="get", absolute_path=absolute_path, filesize=filesize)
 
     def put(self, filename: str):
         if os.path.isfile(filename):
             self.send_response(500, "File already exists")
         else:
             absolute_path = f"{os.getcwd()}/{filename}"
-            self.allow_transfer(operation="PUT", absolute_path=absolute_path)
+            self.allow_transfer(operation="put", absolute_path=absolute_path)

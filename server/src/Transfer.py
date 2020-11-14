@@ -8,16 +8,23 @@ class Transfer:
         self.__client_address = client_address
         self.__token = token
         self.__transfer_socket.settimeout(120)
+        print("Client connected")
 
     def begin(self):
         try:
-            transfer_request = json.loads(self.__transfer_socket.recv(1024).decode())
+            transfer_request = json.loads(self.__transfer_socket.recv(2048).decode())
+            print("Reading client stuff")
             if transfer_request["token"] == self.__token:
-                if transfer_request["operation"] == "GET":
-                    self.get(transfer_request)
-                elif transfer_request["operation"] == "PUT":
-                    self.put(transfer_request)
+                print("Token correct!")
+                print(transfer_request["token"])
+                if transfer_request["operation"] == "get":
+                    print("get")
+                    self.send_file(transfer_request)
+                elif transfer_request["operation"] == "put":
+                    print("Put")
+                    self.receive_file(transfer_request)
             else:
+                print("TOken incorrect")
                 self.__transfer_socket.close()
                 return
 
@@ -28,7 +35,7 @@ class Transfer:
             self.__transfer_socket.close()
             return
 
-    def get(self, transfer_request):
+    def send_file(self, transfer_request):
         file_path = transfer_request["absolute_path"]
         with open(file_path, "rb") as file:
             while True:
@@ -39,7 +46,7 @@ class Transfer:
                     break
                 self.__transfer_socket.sendall(bytes_read)
 
-    def put(self, transfer_request):
+    def receive_file(self, transfer_request):
         file_path = transfer_request["absolute_path"]
         with open(file_path, "wb") as file:
             while True:
