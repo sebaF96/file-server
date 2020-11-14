@@ -13,18 +13,14 @@ class Transfer:
     def begin(self):
         try:
             transfer_request = json.loads(self.__transfer_socket.recv(2048).decode())
-            print("Reading client stuff")
             if transfer_request["token"] == self.__token:
-                print("Token correct!")
                 print(transfer_request["token"])
                 if transfer_request["operation"] == "get":
-                    print("get")
                     self.send_file(transfer_request)
                 elif transfer_request["operation"] == "put":
                     print("Put")
                     self.receive_file(transfer_request)
             else:
-                print("TOken incorrect")
                 self.__transfer_socket.close()
                 return
 
