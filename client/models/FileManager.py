@@ -1,16 +1,18 @@
 import socket
 import os
 import json
-from tqdm import tqdm
+import tqdm
 
 
 class FileManager:
     def __init__(self, transfer_address, transfer_metadata):
+        print(transfer_address)
         self.__transfer_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-        self.__transfer_socket.connect((transfer_address, transfer_metadata["transfer_port"]))
+        self.__transfer_address = transfer_address
         self.__transfer_metadata = transfer_metadata
 
     def begin(self):
+        self.__transfer_socket.connect((self.__transfer_address, self.__transfer_metadata["transfer_port"]))
         self.__transfer_socket.send(json.dumps(self.__transfer_metadata).encode())
         if self.__transfer_metadata["operation"] == "put":
             self.send_file()
@@ -21,7 +23,7 @@ class FileManager:
         filename = os.path.basename(self.__transfer_metadata["absolute_path"])
         filesize = os.path.getsize(filename)
 
-        progress = tqdm(range(filesize), f"Sending {filename}", unit="B", unit_scale=True, unit_divisor=1024)
+        progress = tqdm.tqdm(range(filesize), f"Sending {filename}", unit="B", unit_scale=True, unit_divisor=1024)
         with open(filename, "rb") as f:
             for _ in progress:
                 bytes_read = f.read(4096)
@@ -29,7 +31,7 @@ class FileManager:
                     progress.close()
                     print("Done!")
                     self.__transfer_socket.close()
-                    return
+                    break
 
                 self.__transfer_socket.sendall(bytes_read)
                 progress.update(len(bytes_read))
@@ -38,14 +40,17 @@ class FileManager:
         filesize = int(self.__transfer_metadata["filesize"])
         filename = os.path.basename(self.__transfer_metadata["absolute_path"])
 
-        progress = tqdm(range(filesize), f"Receiving {filename}", unit="B", unit_scale=True, unit_divisor=1024)
+        #progress = tqdm.tqdm(range(filesize), f"Receiving {filename}", unit="B", unit_scale=True, unit_divisor=1024)
         with open(filename, "wb") as file:
-            for b in progress:
-                bytes_read = self.__transfer_socket.recv(4096)
+            while True:
+                print("Recibiendo...")
+                bytes_read = self.__transfer_socket.recv(1024)
                 if not bytes_read:
-                    progress.close()
-                    self.__transfer_socket.close()
-                    print("Done(?")
-                    return
+                    break
                 file.write(bytes_read)
-                progress.update(len(bytes_read))
+                print("Escritos")
+                # progress.update(len(bytes_read))
+                print("Updateado")
+            # progress.close()
+
+            print("Done(?")

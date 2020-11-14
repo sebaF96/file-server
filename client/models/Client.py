@@ -1,7 +1,7 @@
 import socket
 import os
 import json
-import threading
+import multiprocessing
 from .FileManager import FileManager
 
 
@@ -64,10 +64,11 @@ class Client:
         if int(response["status_code"]) == 500:
             self.show_response(response)
         elif int(response["status_code"]) == 200:
+            print(response)
             transfer = FileManager(self.__server_address, response)
-            thread = threading.Thread(target=transfer.begin)
-            thread.start()
-            thread.join()
+            p = multiprocessing.Process(target=transfer.begin)
+            p.start()
+            p.join()
 
     def put(self, filename):
         request = {"command": "put", "argument": filename}
@@ -77,9 +78,9 @@ class Client:
             self.show_response(response)
         elif int(response["status_code"]) == 200:
             transfer = FileManager(self.__server_address, response)
-            thread = threading.Thread(target=transfer.begin)
-            thread.start()
-            thread.join()
+            p = multiprocessing.Process(target=transfer.begin)
+            p.start()
+            p.join()
 
     """Local commands"""
     @staticmethod

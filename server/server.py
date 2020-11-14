@@ -37,13 +37,14 @@ def attend_client(client_socket, address: str, SESSION_TOKEN: str, transfers_por
     print(f"Client {address} disconnected")
 
 
-def listen_for_transfers(transfer_socket: socket.socket, transfer_port: int, SESSION_TOKEN: str) -> None:
+def listen_for_transfers(transfer_socket, transfer_port: int, SESSION_TOKEN: str) -> None:
     print(f"Listening for transfers on port {transfer_port}")
     while True:
+        print("Listening")
         transfer_socket.listen(16)
         client_socket, address = transfer_socket.accept()
+        print("Accepted")
         transfer = src.Transfer(client_socket, address, SESSION_TOKEN)
-
         p = multiprocessing.Process(target=transfer.begin)
         p.start()
 
@@ -60,7 +61,7 @@ def main() -> None:
 
     print(f"Server started at {local_address}")
     print(f"Listening for connections at port {main_port}")
-    threading.Thread(target=listen_for_transfers, args=(transfer_socket, transfer_port, SESSION_TOKEN), daemon=True).start()
+    multiprocessing.Process(target=listen_for_transfers, args=(transfer_socket, transfer_port, SESSION_TOKEN)).start()
     print('Waiting for connections...')
 
     while True:

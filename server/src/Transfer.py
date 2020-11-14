@@ -7,7 +7,7 @@ class Transfer:
         self.__transfer_socket = transfer_socket
         self.__client_address = client_address
         self.__token = token
-        self.__transfer_socket.settimeout(120)
+        # self.__transfer_socket.settimeout(120)
         print("Client connected")
 
     def begin(self):
@@ -39,12 +39,17 @@ class Transfer:
         file_path = transfer_request["absolute_path"]
         with open(file_path, "rb") as file:
             while True:
-                bytes_read = file.read(4096)
+                bytes_read = file.read(1024)
+                print("Reading...")
                 if not bytes_read:
-                    print(f"File {file_path} successfully transmitted to {self.__client_address}")
-                    self.__transfer_socket.close()
                     break
+
                 self.__transfer_socket.sendall(bytes_read)
+                print("Sent")
+
+        print(f"File {file_path} successfully transmitted to {self.__client_address}")
+        self.__transfer_socket.close()
+        print("Socket closed")
 
     def receive_file(self, transfer_request):
         file_path = transfer_request["absolute_path"]
@@ -52,8 +57,8 @@ class Transfer:
             while True:
                 bytes_read = self.__transfer_socket.recv(4096)
                 if not bytes_read:
-                    print(f"Received {file_path} from {self.__client_address}")
-                    self.__transfer_socket.close()
                     break
                 file.write(bytes_read)
 
+            print(f"Received {file_path} from {self.__client_address}")
+            exit(0)
