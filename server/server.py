@@ -7,6 +7,7 @@ import src
 import multiprocessing
 import threading
 import signal
+import secrets
 
 
 def handle_close(s, frame) -> None:
@@ -29,25 +30,28 @@ def read_ports() -> tuple:
     return port, transfer_port
 
 
-def attend_client(client_socket, address) -> None:
+def attend_client(client_socket, address: str, SESSION_TOKEN: str, transfers_port: int) -> None:
     print('\nGot a connection from', address)
-    conn = src.Connection(client_socket, address)
+    conn = src.Connection(client_socket, address, SESSION_TOKEN, transfers_port)
     conn.start()
     print(f"Client {address} disconnected")
 
 
-def listen_for_transfers(transfer_socket: socket.socket, transfer_port: int) -> None:
+def listen_for_transfers(transfer_socket: socket.socket, transfer_port: int, SESSION_TOKEN: str) -> None:
     print(f"Listening for transfers on port {transfer_port}")
     while True:
         transfer_socket.listen(16)
         client_socket, address = transfer_socket.accept()
-        th = multiprocessing.Process(target=attend_client, args=(client_socket, address))
-        th.start()
+        transfer = src.Transfer(client_socket, address, SESSION_TOKEN)
+
+        p = multiprocessing.Process(target=transfer.begin)
+        p.start()
 
 
 def main() -> None:
     local_address = socket.gethostbyname(socket.getfqdn() + ".local")
     main_port, transfer_port = read_ports()
+    SESSION_TOKEN = secrets.token_hex(64)
 
     server_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     server_socket.bind(('', main_port))
@@ -56,13 +60,13 @@ def main() -> None:
 
     print(f"Server started at {local_address}")
     print(f"Listening for connections at port {main_port}")
-    threading.Thread(target=listen_for_transfers, args=(transfer_socket, transfer_port), daemon=True).start()
+    threading.Thread(target=listen_for_transfers, args=(transfer_socket, transfer_port, SESSION_TOKEN), daemon=True).start()
     print('Waiting for connections...')
 
     while True:
         server_socket.listen(16)
         client_socket, address = server_socket.accept()
-        th = multiprocessing.Process(target=attend_client, args=(client_socket, address))
+        th = multiprocessing.Process(target=attend_client, args=(client_socket, address, SESSION_TOKEN, transfer_port))
         th.start()
 
 
