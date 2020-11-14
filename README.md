@@ -113,6 +113,70 @@ If there's a **file-server** in the given address listening for main connections
 
 ### Communication
 
+
+Client and Server main communications are through json formatted messages, and this messages will be utf-8 encoded.
+
+#### Sending messages to the server
+
+ The format to **send messages to the server** is the following:
+
+```json
+{
+  "command": "ls",
+  "argument": "/home/server"
+}
+```
+
+It doesn't matters that your command has no argument, the previous format must be respected or server will answer a **500** error message letting you know that your message is bad formed. In the case that your command has no argument, your message should be like this:
+
+```json
+{
+  "command": "ls",
+  "argument": null
+}
+```
+
+#### Receiving server responses
+
+Server will always answer a json formatted message containing a status code, a message and content if your command has any output. Examples shown below:
+
+
+- You send (json formatted) **pwd** to the server, server answer will be like this
+```json
+{
+  "status_code": 200,
+  "status_message": "OK",
+  "content": "/home/server/Documents"
+}
+```
+
+- You send (json formatted) **mkdir pdf-files** to the server, server answer will be like this
+```json
+{
+  "status_code": 200,
+  "status_message": "OK",
+  "content": null
+}
+```
+
+- You send (json formatted) **cd /homeee** to the server, server answer will be like this
+```json
+{
+  "status_code": 500,
+  "status_message": "No such directory",
+  "content": null
+}
+```
+
+- You send (NOT json formatted) **pwd** to the server, server answer will be like this
+```json
+{
+  "status_code": 500,
+  "status_message": "Invalid command format, it doesn't respect the protocol",
+  "content": null
+}
+```
+
 ### Sending and receiving files
 
 
