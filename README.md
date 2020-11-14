@@ -3,7 +3,7 @@
 
 - Communications over TCP using Python's low-level networking interface [socket][socket]
 - Remote commands runs in server side and its output is sent to the client
-- Server will always answer a status code with a message, and the standar output (if any)
+- Server will always answer a status code with a message, and the standard output (if any)
 - Server is able to attend multiple clients at the same time using multiprocessing
 ------------
 
@@ -13,13 +13,13 @@
 	- [Server](https://github.com/sebaF96/file-server#server)
 	- [Client](https://github.com/sebaF96/file-server#client)
 3. [Protocol](https://github.com/sebaF96/file-server#protocol)
-	- Comunication
-	- Sending and receiving files
+	- [Communication](https://github.com/sebaF96/file-server#communication)
+	- [Sending and receiving files](https://github.com/sebaF96/file-server#sending-and-receiving-files)
 
 ------------
 
 ## Install
-To install and run this programm you'll need python3, pip3, python3-venv and a couple of dependencies.
+To install and run this program you'll need python3, pip3, python3-venv and a couple of dependencies.
 
 Install python3, pip3 and python3-venv
 
@@ -48,7 +48,7 @@ You're good to go now.
 ## Usage
 
 ### Server
-Server will listen in two ports, the main one, where it will be specting connections to trade commands and responses with the client, and a second one that's dedicated just to send and receive files. You can specify what ports server will use for both cases, and if you don't, it will use default ones (8080 for main connections and 3000 for transfers)
+Server will listen in two ports, the main one, where it will be expecting connections to trade commands and responses with the client, and a second one that's dedicated just to send and receive files. You can specify what ports server will use for both cases, and if you don't, it will use default ones (8080 for main connections and 3000 for transfers)
 
 - To specify main port, use options **-p** or **--port**
 - To specify transfer port, use options **-t** or **--transfer-port**
