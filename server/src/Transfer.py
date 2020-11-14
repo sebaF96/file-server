@@ -40,16 +40,15 @@ class Transfer:
         with open(file_path, "rb") as file:
             while True:
                 bytes_read = file.read(1024)
-                print("Reading...")
                 if not bytes_read:
                     break
 
                 self.__transfer_socket.sendall(bytes_read)
-                print("Sent")
 
         print(f"File {file_path} successfully transmitted to {self.__client_address}")
         self.__transfer_socket.close()
         print("Socket closed")
+        exit(0)
 
     def receive_file(self, transfer_request):
         file_path = transfer_request["absolute_path"]

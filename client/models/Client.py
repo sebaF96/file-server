@@ -64,7 +64,6 @@ class Client:
         if int(response["status_code"]) == 500:
             self.show_response(response)
         elif int(response["status_code"]) == 200:
-            print(response)
             transfer = FileManager(self.__server_address, response)
             p = multiprocessing.Process(target=transfer.begin)
             p.start()

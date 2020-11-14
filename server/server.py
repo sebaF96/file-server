@@ -5,7 +5,6 @@ import sys
 import socket
 import src
 import multiprocessing
-import threading
 import signal
 import secrets
 
@@ -37,16 +36,19 @@ def attend_client(client_socket, address: str, SESSION_TOKEN: str, transfers_por
     print(f"Client {address} disconnected")
 
 
+def attend_transfer(client_socket, address: str, SESSION_TOKEN: str) -> None:
+    transfer = src.Transfer(client_socket, address, SESSION_TOKEN)
+    transfer.begin()
+
+
 def listen_for_transfers(transfer_socket, transfer_port: int, SESSION_TOKEN: str) -> None:
     print(f"Listening for transfers on port {transfer_port}")
     while True:
-        print("Listening")
         transfer_socket.listen(16)
         client_socket, address = transfer_socket.accept()
-        print("Accepted")
-        transfer = src.Transfer(client_socket, address, SESSION_TOKEN)
-        p = multiprocessing.Process(target=transfer.begin)
+        p = multiprocessing.Process(target=attend_transfer, args=(client_socket, address, SESSION_TOKEN))
         p.start()
+        del client_socket
 
 
 def main() -> None:

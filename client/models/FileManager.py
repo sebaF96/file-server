@@ -6,7 +6,6 @@ import tqdm
 
 class FileManager:
     def __init__(self, transfer_address, transfer_metadata):
-        print(transfer_address)
         self.__transfer_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         self.__transfer_address = transfer_address
         self.__transfer_metadata = transfer_metadata
@@ -25,7 +24,7 @@ class FileManager:
 
         progress = tqdm.tqdm(range(filesize), f"Sending {filename}", unit="B", unit_scale=True, unit_divisor=1024)
         with open(filename, "rb") as f:
-            for _ in progress:
+            while True:
                 bytes_read = f.read(4096)
                 if not bytes_read:
                     progress.close()
@@ -40,17 +39,14 @@ class FileManager:
         filesize = int(self.__transfer_metadata["filesize"])
         filename = os.path.basename(self.__transfer_metadata["absolute_path"])
 
-        #progress = tqdm.tqdm(range(filesize), f"Receiving {filename}", unit="B", unit_scale=True, unit_divisor=1024)
+        progress = tqdm.tqdm(range(filesize), f"Receiving {filename}", unit="B", unit_scale=True, unit_divisor=1024)
         with open(filename, "wb") as file:
             while True:
-                print("Recibiendo...")
-                bytes_read = self.__transfer_socket.recv(1024)
+                bytes_read = self.__transfer_socket.recv(4096)
                 if not bytes_read:
                     break
                 file.write(bytes_read)
-                print("Escritos")
-                # progress.update(len(bytes_read))
-                print("Updateado")
-            # progress.close()
+                progress.update(len(bytes_read))
 
-            print("Done(?")
+            progress.close()
+            print("Done!")
