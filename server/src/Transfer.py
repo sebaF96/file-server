@@ -39,7 +39,7 @@ class Transfer:
         file_path = transfer_request["absolute_path"]
         with open(file_path, "rb") as file:
             while True:
-                bytes_read = file.read(1024)
+                bytes_read = file.read(4096)
                 if not bytes_read:
                     break
 
