@@ -10,9 +10,9 @@
 
 1. [Install](https://github.com/sebaF96/file-server#install)
 2. [Usage](https://github.com/sebaF96/file-server#usage)
-	- Server
-	- Client
-3. Protocol
+	- [Server](https://github.com/sebaF96/file-server#server)
+	- [Client](https://github.com/sebaF96/file-server#client)
+3. [Protocol](https://github.com/sebaF96/file-server#protocol)
 	- Comunication
 	- Sending and receiving files
 
@@ -43,9 +43,9 @@ $ source venv/bin/activate
 
 You're good to go now.
 
-## Usage
-
 ------------
+
+## Usage
 
 ### Server
 Server will listen in two ports, the main one, where it will be specting connections to trade commands and responses with the client, and a second one that's dedicated just to send and receive files. You can specify what ports server will use for both cases, and if you don't, it will use default ones (8080 for main connections and 3000 for transfers)
@@ -105,6 +105,18 @@ If there's a **file-server** in the given address listening for main connections
 |  exit  | local  | closes the connection and exits  |
 | get filename | remote  | downloads given filename from the server, and saves it in your working directory  |
 | put filename  | remote  | uploads given filename to the server, and saves it in server's working directory  |
+
+
+------------
+
+## Protocol
+
+### Communication
+
+### Sending and receiving files
+
+
+------------
 
 
 
