@@ -44,7 +44,7 @@ class Transfer:
         """
         Handles a file send to the associated client's socket. It will open the file in binary-read mode,
         read chunks of 4096 bytes and send them to the client. When it's done reading the file and sending
-        it, it will close the connection and exits. This will send an EOF to the client side
+        it, it will close the connection and exit. This will send an EOF to the client side
         after he receives the last byte of the file.
 
         :param transfer_request: Dictionary with all the transfer's metadata
