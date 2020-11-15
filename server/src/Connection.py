@@ -30,20 +30,16 @@ class Connection:
             client_datagram = self.__client_socket.recv(2048).decode()
             if not client_datagram:
                 break
-
             try:
                 client_json = json.loads(client_datagram)
                 command, argument = client_json["command"], client_json["argument"]
             except json.decoder.JSONDecodeError:
                 self.send_response(500, "Invalid command format, it doesn't respect the protocol")
                 continue
-
             if command in self.__COMMANDS and argument is None:
                 self.__COMMANDS[command]()
-
             elif command in self.__COMMANDS_ARGS and argument:
                 self.__COMMANDS_ARGS[command](argument)
-
             else:
                 self.send_response(500, "Invalid command or argument(s)")
 
@@ -114,7 +110,7 @@ class Connection:
 
     def cd(self, directory: str) -> None:
         """
-        Change the current working directory to the given one if exists,
+        Changes the current working directory to the given one if exists,
         and sends the output to the client in a json-formatted message
 
         :param directory: String representing the directory name
