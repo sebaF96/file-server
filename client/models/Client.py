@@ -1,7 +1,7 @@
 import socket
 import os
 import json
-import multiprocessing
+import threading
 from .FileManager import FileManager
 
 
@@ -57,29 +57,29 @@ class Client:
         if response['content']:
             print(response['content'])
 
+    def transfer(self, request):
+        self.__socket.send(json.dumps(request).encode())
+        response = json.loads(self.__socket.recv(2048).decode())
+
+        if int(response["status_code"]) == 500:
+            self.show_response(response)
+        elif int(response["status_code"]) == 200:
+            transfer = FileManager(self.__server_address, response)
+            thread_name = f"Thr[{request['command']}]-{request['argument']}"  # Thr[put]-Rute.pdf
+            thread = threading.Thread(target=transfer.begin, name=thread_name)
+            thread.start()
+            thread.join()
+
     def get(self, filename):
         request = {"command": "get", "argument": filename}
-        self.__socket.send(json.dumps(request).encode())
-        response = json.loads(self.__socket.recv(2048).decode())
-        if int(response["status_code"]) == 500:
-            self.show_response(response)
-        elif int(response["status_code"]) == 200:
-            transfer = FileManager(self.__server_address, response)
-            p = multiprocessing.Process(target=transfer.begin)
-            p.start()
-            p.join()
+        self.transfer(request)
 
     def put(self, filename):
-        request = {"command": "put", "argument": filename}
-        self.__socket.send(json.dumps(request).encode())
-        response = json.loads(self.__socket.recv(2048).decode())
-        if int(response["status_code"]) == 500:
-            self.show_response(response)
-        elif int(response["status_code"]) == 200:
-            transfer = FileManager(self.__server_address, response)
-            p = multiprocessing.Process(target=transfer.begin)
-            p.start()
-            p.join()
+        if os.path.isfile(filename):
+            request = {"command": "put", "argument": filename}
+            self.transfer(request)
+        else:
+            print("No such file")
 
     """Local commands"""
     @staticmethod
