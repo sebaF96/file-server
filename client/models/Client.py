@@ -100,7 +100,7 @@ class Client:
 
     def get(self, filename: str) -> None:
         """
-        Format a json message of a get request, and calls transfer() method with it
+        Formats a json message of a get request, and calls transfer() method with it
 
         :param filename: String representing the base name of the file to download
         :return: None
@@ -110,7 +110,7 @@ class Client:
 
     def put(self, filename: str) -> None:
         """
-        Format a json message of a put request, and calls transfer() method with it
+        Formats a json message of a put request, and calls transfer() method with it
 
         :param filename: String representing the base name of the file to upload
         :return: None

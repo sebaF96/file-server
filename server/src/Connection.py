@@ -84,8 +84,7 @@ class Connection:
 
     def pwd(self) -> None:
         """
-        Check for server's current working directory
-        and sends the output to the client in a json-formatted message
+        Checks for server's current working directory and sends the output to the client in a json-formatted message
 
         :return: None
         """
@@ -94,7 +93,7 @@ class Connection:
 
     def ls(self, directory=None):
         """
-        List the given directory or the current directory if none is given,
+        Lists the given directory or the current directory if none is given,
         and sends the output to the client in a json-formatted message
 
         :param directory: String representing the directory to list. None by default
