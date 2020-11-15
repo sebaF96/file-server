@@ -1,19 +1,22 @@
 import socket
 import os
 import json
+import multiprocessing
+from .FileManager import FileManager
 
 
 class Client:
     def __init__(self, address, port):
         self.__socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         self.__socket.connect((address, port))
+        self.__server_address = address
         print(f"Connected to File Server at {address} on port {port}")
         self.__prompt = f"\033[1;36mfile-server@{address}\033[0m$ "
         os.chdir(os.getenv("HOME", default="/"))
 
-        self.__REMOTE_COMMANDS = ['pwd', 'cd', 'ls']
+        self.__REMOTE_COMMANDS = ['pwd', 'cd', 'ls', 'mkdir']
         self.__COMMANDS = {'lpwd': self.lpwd, 'lls': self.lls, 'exit': self.disconnect, 'help': self.show_help, 'clear': self.clear}
-        self.__COMMANDS_ARGS = {'lcd': self.lcd, 'lls': self.lls}
+        self.__COMMANDS_ARGS = {'lcd': self.lcd, 'lls': self.lls, 'lmkdir': self.lmkdir, 'get': self.get, 'put': self.put}
 
     def run(self):
         while True:
@@ -54,13 +57,37 @@ class Client:
         if response['content']:
             print(response['content'])
 
+    def get(self, filename):
+        request = {"command": "get", "argument": filename}
+        self.__socket.send(json.dumps(request).encode())
+        response = json.loads(self.__socket.recv(2048).decode())
+        if int(response["status_code"]) == 500:
+            self.show_response(response)
+        elif int(response["status_code"]) == 200:
+            transfer = FileManager(self.__server_address, response)
+            p = multiprocessing.Process(target=transfer.begin)
+            p.start()
+            p.join()
+
+    def put(self, filename):
+        request = {"command": "put", "argument": filename}
+        self.__socket.send(json.dumps(request).encode())
+        response = json.loads(self.__socket.recv(2048).decode())
+        if int(response["status_code"]) == 500:
+            self.show_response(response)
+        elif int(response["status_code"]) == 200:
+            transfer = FileManager(self.__server_address, response)
+            p = multiprocessing.Process(target=transfer.begin)
+            p.start()
+            p.join()
+
     """Local commands"""
     @staticmethod
     def lpwd():
         print(os.getcwd())
 
     @staticmethod
-    def lcd(directory):
+    def lcd(directory: str):
         try:
             os.chdir(directory)
         except FileNotFoundError:
@@ -74,6 +101,13 @@ class Client:
             print(content)
         except FileNotFoundError:
             print("No such directory")
+
+    @staticmethod
+    def lmkdir(directory: str):
+        try:
+            os.mkdir(directory)
+        except FileExistsError:
+            print("Directory already exists")
 
     @staticmethod
     def clear():
