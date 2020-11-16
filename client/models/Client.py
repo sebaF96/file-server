@@ -3,6 +3,7 @@ import os
 import json
 import threading
 from .FileManager import FileManager
+from .client_helper import Constants
 
 
 class Client:
@@ -13,8 +14,8 @@ class Client:
         self.__socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         self.__socket.connect((address, port))
         self.__server_address = address
-        print(f"Connected to File Server at {address} on port {port}")
-        self.__prompt = f"\033[1;36mfile-server@{address}\033[0m$ "
+        print(Constants.connected_message(address, port))
+        self.__prompt = Constants.prompt(address)
         os.chdir(os.getenv("HOME", default="/"))
 
         self.__REMOTE_COMMANDS = ['pwd', 'cd', 'ls', 'mkdir']
@@ -44,7 +45,7 @@ class Client:
             elif command in self.__COMMANDS_ARGS and argument:
                 self.__COMMANDS_ARGS[command](argument)
             else:
-                print("Command not recognized")
+                print(Constants.INVALID_COMMAND)
 
     def communicate(self, command: str, argument: str) -> None:
         """
@@ -67,11 +68,11 @@ class Client:
         :param response: Dictionary representing the json-formatted message from the server
         :return: None
         """
-        end_color = "\033[0m"
-        if int(response['status_code']) == 200:
-            color = "\033[0;92m"  # Green
+        end_color = Constants.RESET_COLOR
+        if int(response['status_code']) == Constants.OK_STATUS_CODE:
+            color = Constants.OK_COLOR
         else:
-            color = "\033[1;31m"  # Red
+            color = Constants.ERROR_COLOR
 
         print(f"{color}{response['status_code']}: {response['status_message']}{end_color}\n")
         if response['content']:
@@ -87,13 +88,13 @@ class Client:
         :return: None
         """
         self.__socket.send(json.dumps(request).encode())
-        response = json.loads(self.__socket.recv(2048).decode())
+        response = json.loads(self.__socket.recv(Constants.BUFFER_SIZE).decode())
 
-        if int(response["status_code"]) == 500:
+        if int(response["status_code"]) == Constants.ERROR_STATUS_CODE:
             self.show_response(response)
-        elif int(response["status_code"]) == 200:
+        elif int(response["status_code"]) == Constants.OK_STATUS_CODE:
             transfer = FileManager(self.__server_address, response)
-            thread_name = f"Thr[{request['command']}]-{request['argument']}"  # Thr[put]-Rute.pdf
+            thread_name = Constants.thread_name(operation=request['command'], filename=request['argument'])
             thread = threading.Thread(target=transfer.begin, name=thread_name)
             thread.start()
             thread.join()
@@ -119,7 +120,7 @@ class Client:
             request = {"command": "put", "argument": filename}
             self.transfer(request)
         else:
-            print("No such file")
+            print(Constants.FILE_NOT_FOUND)
 
     """Local commands"""
     @staticmethod
@@ -142,7 +143,7 @@ class Client:
         if os.path.isdir(directory):
             os.chdir(directory)
         else:
-            print("No such directory")
+            print(Constants.DIRECTORY_NOT_FOUND)
 
     @staticmethod
     def lls(directory: str = None) -> None:
@@ -158,7 +159,9 @@ class Client:
             content = None if len(output) == 0 else "\n".join(output)
             print(content)
         except FileNotFoundError:
-            print("No such directory")
+            print(Constants.DIRECTORY_NOT_FOUND)
+        except NotADirectoryError:
+            print(Constants.DIRECTORY_NOT_FOUND)
 
     @staticmethod
     def lmkdir(directory: str) -> None:
@@ -171,7 +174,7 @@ class Client:
         try:
             os.mkdir(directory)
         except FileExistsError:
-            print("Directory already exists")
+            print(Constants.DIRECTORY_EXISTS)
 
     @staticmethod
     def clear() -> None:
@@ -189,7 +192,7 @@ class Client:
         :return: None
         """
         self.__socket.close()
-        print("Disconnected from file-server")
+        print(Constants.DISCONNECTED_MESSAGE)
         exit(0)
 
     @staticmethod
