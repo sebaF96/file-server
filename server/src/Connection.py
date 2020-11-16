@@ -1,6 +1,6 @@
 import os
 import json
-from .server_helper import Constants, print_colored
+from .server_helper import Constants
 
 
 class Connection:
@@ -15,7 +15,8 @@ class Connection:
         self.__client_address = client_address
         self.__secret_token = SESSION_TOKEN
         self.__transfers_port = transfers_port
-        os.chdir(os.getenv("HOME", default="/home"))
+        if os.name == 'posix':
+            os.chdir(os.getenv("HOME", default="/home"))
 
         self.__COMMANDS = {'pwd': self.pwd, 'ls': self.ls}
         self.__COMMANDS_ARGS = {'cd': self.cd, 'ls': self.ls, 'mkdir': self.mkdir, 'get': self.get, 'put': self.put}
@@ -90,7 +91,7 @@ class Connection:
         :return: None
         """
         working_directory = os.getcwd()
-        self.send_response(Constants.OK_STATUS_CODE, Constants.OK_STATUS_CODE, working_directory)
+        self.send_response(Constants.OK_STATUS_CODE, Constants.OK_MESSAGE, working_directory)
 
     def ls(self, directory=None):
         """

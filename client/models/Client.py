@@ -16,7 +16,8 @@ class Client:
         self.__server_address = address
         print(Constants.connected_message(address, port))
         self.__prompt = Constants.prompt(address)
-        os.chdir(os.getenv("HOME", default="/"))
+        if os.name == 'posix':
+            os.chdir(os.getenv("HOME", default="/"))
 
         self.__REMOTE_COMMANDS = ['pwd', 'cd', 'ls', 'mkdir']
         self.__COMMANDS = {'lpwd': self.lpwd, 'lls': self.lls, 'exit': self.disconnect, 'help': self.show_help, 'clear': self.clear}
