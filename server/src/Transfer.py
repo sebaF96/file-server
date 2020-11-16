@@ -60,7 +60,7 @@ class Transfer:
                     break
                 self.__transfer_socket.sendall(bytes_read)
 
-        print_colored(color="PURPLE", message=f"↑ File {file_path} transmitted to {self.__client_address}")
+        print_colored(color="PURPLE", message=f"{Constants.date_time()} TRANSMITTED {file_path} to {self.__client_address}")
         self.__transfer_socket.close()
 
     def receive_file(self, transfer_request: dict) -> None:
@@ -80,5 +80,5 @@ class Transfer:
                     break
                 file.write(bytes_read)
 
-            print_colored(color="YELLOW", message=f"↓ Received {file_path} from {self.__client_address}")
+            print_colored(color="YELLOW", message=f"{Constants.date_time()} RECEIVED {file_path} from {self.__client_address}")
             self.__transfer_socket.close()

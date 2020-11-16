@@ -1,4 +1,5 @@
 from collections import defaultdict
+import datetime
 
 
 class Constants:
@@ -38,6 +39,21 @@ class Constants:
     READY_FLAG = b'00000000'
     TRANSFERS_TIMEOUT_SECONDS = 90
 
+    @staticmethod
+    def date_time():
+        now = datetime.datetime.now()
+        year = '{:02d}'.format(now.year)
+        month = '{:02d}'.format(now.month)
+        day = '{:02d}'.format(now.day)
+        hour = '{:02d}'.format(now.hour)
+        minute = '{:02d}'.format(now.minute)
+
+        # [16/11/2020 - 12:01]
+        return f"[{day}/{month}/{year} - {hour}:{minute}]"
+
 
 def print_colored(color: str, message: str):
     print(f"{Constants.COLORS[color.upper()]}{message}{Constants.COLORS['RESET']}")
+
+
+

@@ -56,10 +56,10 @@ def attend_client(client_socket, address: str, SESSION_TOKEN: str, transfers_por
     file transfers
     :return: None
     """
-    src.print_colored(color="GREEN", message=f"[+] Got a connection from {address}")
+    src.print_colored(color="GREEN", message=f"{src.Constants.date_time()} Got a connection from {address}")
     conn = src.Connection(client_socket, address, SESSION_TOKEN, transfers_port)
     conn.start()
-    src.print_colored(color="RED", message=f"[-] Client {address} disconnected")
+    src.print_colored(color="RED", message=f"{src.Constants.date_time()} Client {address} disconnected")
 
 
 def attend_transfer(client_socket, address: str, SESSION_TOKEN: str) -> None:
