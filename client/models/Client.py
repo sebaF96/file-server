@@ -57,7 +57,7 @@ class Client:
         """
         data = {"command": command, "argument": argument}
         self.__socket.send(json.dumps(data).encode())
-        response = json.loads(self.__socket.recv(2048).decode())
+        response = json.loads(self.__socket.recv(Constants.BUFFER_SIZE).decode())
         self.show_response(response)
 
     @staticmethod
