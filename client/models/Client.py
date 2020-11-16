@@ -139,9 +139,9 @@ class Client:
         :param directory: String representing the directory name
         :return: None
         """
-        try:
+        if os.path.isdir(directory):
             os.chdir(directory)
-        except FileNotFoundError:
+        else:
             print("No such directory")
 
     @staticmethod

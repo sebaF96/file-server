@@ -116,10 +116,10 @@ class Connection:
         :param directory: String representing the directory name
         :return: None
         """
-        try:
+        if os.path.isdir(directory):
             os.chdir(directory)
             self.send_response(Constants.OK_STATUS_CODE, Constants.OK_MESSAGE)
-        except FileNotFoundError:
+        else:
             self.send_response(Constants.ERROR_STATUS_CODE, Constants.DIRECTORY_DOESNT_EXISTS)
 
     def mkdir(self, directory: str) -> None:
