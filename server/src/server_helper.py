@@ -35,6 +35,8 @@ class Constants:
     PORTS_VALUE_ERROR = "Ports must be positive integers"
     PORTS_ASSERTION_ERROR = "Main port and Transfer port can not be the same"
 
+    READY_FLAG = b'00000000'
+
 
 def print_colored(color: str, message: str):
     print(f"{Constants.COLORS[color.upper()]}{message}{Constants.COLORS['RESET']}")

@@ -1,6 +1,6 @@
 import socket
 import json
-from .server_helper import print_colored
+from .server_helper import print_colored, Constants
 
 
 class Transfer:
@@ -24,12 +24,12 @@ class Transfer:
         :return:
         """
         try:
-            transfer_request = json.loads(self.__transfer_socket.recv(2048).decode())
+            transfer_request = json.loads(self.__transfer_socket.recv(Constants.BUFFER_SIZE).decode())
             if transfer_request["token"] == self.__token:
                 if transfer_request["operation"] == "get":
                     self.send_file(transfer_request)
                 elif transfer_request["operation"] == "put":
-                    self.__transfer_socket.send(b'00000000')
+                    self.__transfer_socket.send(Constants.READY_FLAG)
                     self.receive_file(transfer_request)
             else:
                 self.__transfer_socket.close()
@@ -55,7 +55,7 @@ class Transfer:
         file_path = transfer_request["absolute_path"]
         with open(file_path, "rb") as file:
             while True:
-                bytes_read = file.read(4096)
+                bytes_read = file.read(Constants.FILE_BUFFER_SIZE)
                 if not bytes_read:
                     break
                 self.__transfer_socket.sendall(bytes_read)
@@ -75,7 +75,7 @@ class Transfer:
         file_path = transfer_request["absolute_path"]
         with open(file_path, "wb") as file:
             while True:
-                bytes_read = self.__transfer_socket.recv(4096)
+                bytes_read = self.__transfer_socket.recv(Constants.FILE_BUFFER_SIZE)
                 if not bytes_read:
                     break
                 file.write(bytes_read)
