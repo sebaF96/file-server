@@ -2,6 +2,7 @@ import socket
 import os
 import json
 import tqdm
+from .client_helper import Constants
 
 
 class FileManager:
@@ -27,10 +28,10 @@ class FileManager:
         if self.__transfer_metadata["operation"] == "put":
             self.__transfer_socket.recv(8)
             self.send_file()
-            print("File successfully uploaded")
+            print(Constants.FILE_UPLOADED)
         elif self.__transfer_metadata["operation"] == "get":
             self.get_file()
-            print("File successfully downloaded")
+            print(Constants.FILE_DOWNLOADED)
 
     def send_file(self):
         """
@@ -47,7 +48,7 @@ class FileManager:
         progress = tqdm.tqdm(range(filesize), f"Sending {filename}", unit="B", unit_scale=True, unit_divisor=1024)
         with open(filename, "rb") as f:
             while True:
-                bytes_read = f.read(4096)
+                bytes_read = f.read(Constants.FILE_BUFFER_SIZE)
                 if not bytes_read:
                     progress.close()
                     self.__transfer_socket.close()
@@ -71,7 +72,7 @@ class FileManager:
         progress = tqdm.tqdm(range(filesize), f"Receiving {filename}", unit="B", unit_scale=True, unit_divisor=1024)
         with open(filename, "wb") as file:
             while True:
-                bytes_read = self.__transfer_socket.recv(4096)
+                bytes_read = self.__transfer_socket.recv(Constants.FILE_BUFFER_SIZE)
                 if not bytes_read:
                     break
                 file.write(bytes_read)

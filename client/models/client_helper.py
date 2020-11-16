@@ -16,6 +16,8 @@ class Constants:
 
     BUFFER_SIZE = 2048
     FILE_BUFFER_SIZE = 4096
+    FILE_UPLOADED = "File successfully uploaded"
+    FILE_DOWNLOADED = "File successfully downloaded"
 
     FILE_NOT_FOUND = "No such file"
     DIRECTORY_NOT_FOUND = "No such directory"
