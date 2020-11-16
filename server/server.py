@@ -17,7 +17,7 @@ def handle_close(s, frame) -> None:
     :param frame: current stack frame
     :return: None
     """
-    print("Closing connections...")
+    print(src.Constants.EXITING)
     exit(0)
 
 
@@ -38,7 +38,9 @@ def read_ports() -> tuple:
             transfer_port = int(argument)
 
     if port < 1024 or transfer_port < 1024:
-        raise ConnectionRefusedError("You can't use reserved ports")
+        raise ConnectionRefusedError(src.Constants.RESERVED_PORTS)
+
+    assert port != transfer_port
     return port, transfer_port
 
 
@@ -54,10 +56,10 @@ def attend_client(client_socket, address: str, SESSION_TOKEN: str, transfers_por
     file transfers
     :return: None
     """
-    print('\nGot a connection from', address)
+    src.print_colored(color="GREEN", message=f"[+] Got a connection from {address}")
     conn = src.Connection(client_socket, address, SESSION_TOKEN, transfers_port)
     conn.start()
-    print(f"Client {address} disconnected")
+    src.print_colored(color="RED", message=f"[-] Client {address} disconnected")
 
 
 def attend_transfer(client_socket, address: str, SESSION_TOKEN: str) -> None:
@@ -86,7 +88,7 @@ def listen_for_transfers(transfer_socket, transfer_port: int, SESSION_TOKEN: str
     in this case, attend_transfer()
     :return: None
     """
-    print(f"Listening for transfers on port {transfer_port}")
+    print(f"{src.Constants.LISTENING_TRANSFERS} {transfer_port}")
     while True:
         transfer_socket.listen(16)
         client_socket, address = transfer_socket.accept()
@@ -114,8 +116,8 @@ def main() -> None:
     transfer_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     transfer_socket.bind(('', transfer_port))
 
-    print(f"Server started at {local_address}")
-    print(f"Listening for connections at port {main_port}")
+    print(f"{src.Constants.SERVED_STARTED} {local_address}")
+    print(f"{src.Constants.LISTENING_MAIN} {main_port}")
     multiprocessing.Process(target=listen_for_transfers, args=(transfer_socket, transfer_port, SESSION_TOKEN)).start()
     print('Waiting for connections...')
 
@@ -135,6 +137,8 @@ if __name__ == '__main__':
     except ConnectionRefusedError as cre:
         print("Error:", cre)
     except ValueError:
-        print("Ports must be positive integers")
+        print(src.Constants.PORTS_VALUE_ERROR)
     except OSError as oe:
         print(oe)
+    except AssertionError:
+        print(src.Constants.PORTS_ASSERTION_ERROR)

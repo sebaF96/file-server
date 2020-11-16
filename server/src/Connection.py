@@ -1,5 +1,6 @@
 import os
 import json
+from .server_helper import Constants, print_colored
 
 
 class Connection:
@@ -27,21 +28,21 @@ class Connection:
         :return: None
         """
         while True:
-            client_datagram = self.__client_socket.recv(2048).decode()
+            client_datagram = self.__client_socket.recv(Constants.BUFFER_SIZE).decode()
             if not client_datagram:
                 break
             try:
                 client_json = json.loads(client_datagram)
                 command, argument = client_json["command"], client_json["argument"]
             except json.decoder.JSONDecodeError:
-                self.send_response(500, "Invalid command format, it doesn't respect the protocol")
+                self.send_response(Constants.ERROR_STATUS_CODE, Constants.BAD_FORMED_MESSAGE)
                 continue
             if command in self.__COMMANDS and argument is None:
                 self.__COMMANDS[command]()
             elif command in self.__COMMANDS_ARGS and argument:
                 self.__COMMANDS_ARGS[command](argument)
             else:
-                self.send_response(500, "Invalid command or argument(s)")
+                self.send_response(Constants.ERROR_STATUS_CODE, Constants.INVALID_COMMAND)
 
     def send_response(self, status_code: int, status_message: str, content: str = None) -> None:
         """
@@ -89,7 +90,7 @@ class Connection:
         :return: None
         """
         working_directory = os.getcwd()
-        self.send_response(200, "OK", working_directory)
+        self.send_response(Constants.OK_STATUS_CODE, Constants.OK_STATUS_CODE, working_directory)
 
     def ls(self, directory=None):
         """
@@ -103,9 +104,9 @@ class Connection:
             output = os.listdir(directory) if directory else os.listdir()
             content = None if len(output) == 0 else "\n".join(output)
 
-            self.send_response(200, "OK", content)
+            self.send_response(Constants.OK_STATUS_CODE, Constants.OK_MESSAGE, content)
         except FileNotFoundError:
-            self.send_response(500, "No such directory")
+            self.send_response(Constants.ERROR_STATUS_CODE, Constants.DIRECTORY_DOESNT_EXISTS)
 
     def cd(self, directory: str) -> None:
         """
@@ -117,9 +118,9 @@ class Connection:
         """
         try:
             os.chdir(directory)
-            self.send_response(200, "OK")
+            self.send_response(Constants.OK_STATUS_CODE, Constants.OK_MESSAGE)
         except FileNotFoundError:
-            self.send_response(500, "No such directory")
+            self.send_response(Constants.ERROR_STATUS_CODE, Constants.DIRECTORY_DOESNT_EXISTS)
 
     def mkdir(self, directory: str) -> None:
         """
@@ -131,9 +132,9 @@ class Connection:
         """
         try:
             os.mkdir(directory)
-            self.send_response(200, "OK")
+            self.send_response(Constants.OK_STATUS_CODE, Constants.OK_MESSAGE)
         except FileExistsError:
-            self.send_response(500, "Directory already exists")
+            self.send_response(Constants.ERROR_STATUS_CODE, Constants.DIRECTORY_EXISTS)
 
     def get(self, filename: str) -> None:
         """
@@ -144,7 +145,7 @@ class Connection:
         :return: None
         """
         if not os.path.isfile(filename):
-            self.send_response(500, "No such file")
+            self.send_response(Constants.ERROR_STATUS_CODE, Constants.FILE_DOESNT_EXISTS)
         else:
             absolute_path = os.path.abspath(filename)
             filesize = os.path.getsize(filename)
@@ -159,7 +160,7 @@ class Connection:
         :return: None
         """
         if os.path.isfile(filename):
-            self.send_response(500, "File already exists")
+            self.send_response(Constants.ERROR_STATUS_CODE, Constants.FILE_EXISTS)
         else:
             absolute_path = f"{os.getcwd()}/{filename}"
             self.allow_transfer(operation="put", absolute_path=absolute_path)

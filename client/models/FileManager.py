@@ -25,6 +25,7 @@ class FileManager:
         self.__transfer_socket.connect((self.__transfer_address, self.__transfer_metadata["transfer_port"]))
         self.__transfer_socket.send(json.dumps(self.__transfer_metadata).encode())
         if self.__transfer_metadata["operation"] == "put":
+            self.__transfer_socket.recv(8)
             self.send_file()
             print("File successfully uploaded")
         elif self.__transfer_metadata["operation"] == "get":
