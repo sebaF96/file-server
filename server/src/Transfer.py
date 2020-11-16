@@ -1,5 +1,6 @@
 import socket
 import json
+from .server_helper import print_colored
 
 
 class Transfer:
@@ -58,7 +59,7 @@ class Transfer:
                     break
                 self.__transfer_socket.sendall(bytes_read)
 
-        print(f"File {file_path} successfully transmitted to {self.__client_address}")
+        print_colored(color="PURPLE", message=f"↑ File {file_path} transmitted to {self.__client_address}")
         self.__transfer_socket.close()
 
     def receive_file(self, transfer_request: dict) -> None:
@@ -78,6 +79,5 @@ class Transfer:
                     break
                 file.write(bytes_read)
 
-            print(f"Received {file_path} from {self.__client_address}")
+            print_colored(color="YELLOW", message=f"↓ Received {file_path} from {self.__client_address}")
             self.__transfer_socket.close()
-
