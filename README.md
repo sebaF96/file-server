@@ -91,20 +91,20 @@ If there's a **file-server** in the given address listening for main connections
 
 | Command  | Type   | Description   |
 | ------------ | ------------ | ------------ |
-|   pwd | remote   | show server's working directory  |
-|  cd /route | remote  | change server's working directory to the given route, if exists  |
-|  ls  | remote  | list files and directories in server's working directory   |
+|   pwd | remote   | show server's current working directory  |
+|  cd /route | remote  | change server's current working directory to the given route, if exists  |
+|  ls  | remote  | list files and directories in server's current working directory   |
 | ls /route  |  remote  |  list files and directories server's given directory, if exists |
-|  mkdir dirname | remote   | creates dirname directory in server's working directory  |
-|  lpwd  | local  | show your working directory  |
-| lcd /route  | local  |  change your working directory to the given route, if exists |
-| lmkdir dirname  | local  |  creates dirname directory in your working directory |
-|  lls | local  | list files and directories in your working directory  |
+|  mkdir dirname | remote   | creates dirname directory in server's current working directory  |
+|  lpwd  | local  | show your current working directory  |
+| lcd /route  | local  |  change your current working directory to the given route, if exists |
+| lmkdir dirname  | local  |  creates dirname directory in your current working directory |
+|  lls | local  | list files and directories in your current working directory  |
 |  lls /route | local  | list files and directories in the given route, if exists  |
 |  help  | local  | shows the client's known commands and their descriptions  |
 |  exit  | local  | closes the connection and exits  |
-| get filename | remote  | downloads given filename from the server, and saves it in your working directory  |
-| put filename  | remote  | uploads given filename to the server, and saves it in server's working directory  |
+| get filename | remote  | downloads given filename from the server, and saves it in your current working directory  |
+| put filename  | remote  | uploads given filename to the server, and saves it in server's current working directory  |
 
 
 ------------
