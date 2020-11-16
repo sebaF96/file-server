@@ -58,7 +58,10 @@ def attend_client(client_socket, address: str, SESSION_TOKEN: str, transfers_por
     """
     src.print_colored(color="GREEN", message=f"{src.Constants.date_time()} Got a connection from {address}")
     conn = src.Connection(client_socket, address, SESSION_TOKEN, transfers_port)
-    conn.start()
+    try:
+        conn.start()
+    except ConnectionResetError:
+        pass
     src.print_colored(color="RED", message=f"{src.Constants.date_time()} Client {address} disconnected")
 
 
@@ -73,8 +76,11 @@ def attend_transfer(client_socket, address: str, SESSION_TOKEN: str) -> None:
     token and compare it with this one before sending or receiving any file
     :return: None
     """
-    transfer = src.Transfer(client_socket, address, SESSION_TOKEN)
-    transfer.begin()
+    try:
+        transfer = src.Transfer(client_socket, address, SESSION_TOKEN)
+        transfer.begin()
+    except ConnectionResetError:
+        pass
 
 
 def listen_for_transfers(transfer_socket, transfer_port: int, SESSION_TOKEN: str) -> None:

@@ -25,16 +25,14 @@ class Transfer:
         """
         try:
             transfer_request = json.loads(self.__transfer_socket.recv(Constants.BUFFER_SIZE).decode())
-            if transfer_request["token"] == self.__token:
-                if transfer_request["operation"] == "get":
-                    self.send_file(transfer_request)
-                elif transfer_request["operation"] == "put":
-                    self.__transfer_socket.send(Constants.READY_FLAG)
-                    self.receive_file(transfer_request)
-            else:
+            if not transfer_request["token"] == self.__token:
                 self.__transfer_socket.close()
                 return
-
+            elif transfer_request["operation"] == "get":
+                self.send_file(transfer_request)
+            elif transfer_request["operation"] == "put":
+                self.__transfer_socket.send(Constants.READY_FLAG)
+                self.receive_file(transfer_request)
         except socket.timeout:
             self.__transfer_socket.close()
             return
