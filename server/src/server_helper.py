@@ -36,6 +36,7 @@ class Constants:
     PORTS_ASSERTION_ERROR = "Main port and Transfer port can not be the same"
 
     READY_FLAG = b'00000000'
+    TRANSFERS_TIMEOUT_SECONDS = 90
 
 
 def print_colored(color: str, message: str):

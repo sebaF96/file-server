@@ -14,7 +14,7 @@ class Transfer:
         self.__transfer_socket = transfer_socket
         self.__client_address = client_address
         self.__token = token
-        # self.__transfer_socket.settimeout(120)
+        self.__transfer_socket.settimeout(Constants.TRANSFERS_TIMEOUT_SECONDS)
 
     def begin(self) -> None:
         """
