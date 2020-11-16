@@ -29,6 +29,7 @@ class Transfer:
                 if transfer_request["operation"] == "get":
                     self.send_file(transfer_request)
                 elif transfer_request["operation"] == "put":
+                    self.__transfer_socket.send(b'00000000')
                     self.receive_file(transfer_request)
             else:
                 self.__transfer_socket.close()
