@@ -95,8 +95,8 @@ def listen_for_transfers(transfer_socket, transfer_port: int, SESSION_TOKEN: str
     :return: None
     """
     print(f"{src.Constants.LISTENING_TRANSFERS} {transfer_port}")
+    transfer_socket.listen(5)
     while True:
-        transfer_socket.listen(16)
         client_socket, address = transfer_socket.accept()
         p = multiprocessing.Process(target=attend_transfer, args=(client_socket, address, SESSION_TOKEN))
         p.start()
@@ -126,9 +126,9 @@ def main() -> None:
     print(f"{src.Constants.LISTENING_MAIN} {main_port}")
     multiprocessing.Process(target=listen_for_transfers, args=(transfer_socket, transfer_port, SESSION_TOKEN)).start()
     print('Waiting for connections...')
+    server_socket.listen(5)
 
     while True:
-        server_socket.listen(16)
         client_socket, address = server_socket.accept()
         th = multiprocessing.Process(target=attend_client, args=(client_socket, address, SESSION_TOKEN, transfer_port))
         th.start()
