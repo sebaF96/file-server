@@ -5,6 +5,7 @@ import sys
 import socket
 import src
 import multiprocessing
+import threading
 import signal
 import secrets
 
@@ -98,8 +99,8 @@ def listen_for_transfers(transfer_socket, transfer_port: int, SESSION_TOKEN: str
     transfer_socket.listen(5)
     while True:
         client_socket, address = transfer_socket.accept()
-        p = multiprocessing.Process(target=attend_transfer, args=(client_socket, address, SESSION_TOKEN))
-        p.start()
+        thr = threading.Thread(target=attend_transfer, args=(client_socket, address, SESSION_TOKEN))
+        thr.start()
         del client_socket
 
 
@@ -115,7 +116,7 @@ def main() -> None:
     """
     local_address = socket.gethostbyname(socket.getfqdn() + ".local")
     main_port, transfer_port = read_ports()
-    SESSION_TOKEN = secrets.token_hex(64)
+    SESSION_TOKEN = secrets.token_urlsafe(64)
 
     server_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     server_socket.bind(('', main_port))
@@ -124,14 +125,15 @@ def main() -> None:
 
     print(f"{src.Constants.SERVED_STARTED} {local_address}")
     print(f"{src.Constants.LISTENING_MAIN} {main_port}")
-    multiprocessing.Process(target=listen_for_transfers, args=(transfer_socket, transfer_port, SESSION_TOKEN)).start()
+    threading.Thread(target=listen_for_transfers, args=(transfer_socket, transfer_port, SESSION_TOKEN), daemon=True).start()
     print('Waiting for connections...')
     server_socket.listen(5)
 
     while True:
         client_socket, address = server_socket.accept()
-        th = multiprocessing.Process(target=attend_client, args=(client_socket, address, SESSION_TOKEN, transfer_port))
-        th.start()
+        process = multiprocessing.Process(target=attend_client, args=(client_socket, address, SESSION_TOKEN, transfer_port))
+        process.start()
+        print(f"Active connections: {len(multiprocessing.active_children())}")
 
 
 if __name__ == '__main__':
