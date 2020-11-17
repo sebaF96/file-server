@@ -8,6 +8,7 @@ class Constants:
     PROMPT_COLOR = "\033[1;36m"
     OK_COLOR = "\033[0;92m"
     ERROR_COLOR = "\033[1;31m"
+    BOLD_COLOR = "\033[1;37m"
     RESET_COLOR = "\033[0m"
 
     OK_STATUS_CODE = 200
@@ -23,10 +24,35 @@ class Constants:
     DIRECTORY_NOT_FOUND = "No such directory"
     DIRECTORY_EXISTS = "Directory already exists"
     DISCONNECTED_MESSAGE = "Disconnected from file-server"
+    HELP_COMMANDS = {
+        "help": "show this message",
+        "pwd": "show server's current working directory (remote)",
+        "lpwd": "show your current working directory (local)",
+        "ls     <route>": "list files and directories (remote)",
+        "lls    <route>": "list files and directories (local)",
+        "cd     [route]": "change server's current working directory (remote)",
+        "lcd    [route]": "change your current working directory (local)",
+        "get    [filename]": "download [filename] from the server (remote)",
+        "put    [filename]": "upload [filename] to the server (remote)",
+        "lmkdir [dirname]": "create a directory (local)",
+        "mkdir  [dirname]": "create a directory (remote)",
+        "exit": "close the connection and leave the program"
+    }
 
     @staticmethod
     def prompt(address):
         return f"{Constants.PROMPT_COLOR}file-server@{address}{Constants.RESET_COLOR}$ "
+
+    @staticmethod
+    def show_help():
+        print(f"{Constants.BOLD_COLOR}\nUSAGE\n{Constants.RESET_COLOR}")
+        print("$ command")
+        print("$ command [mandatory_arg]")
+        print("$ command <optional_arg>")
+        print(f"{Constants.BOLD_COLOR}\nCOMMANDS\n{Constants.RESET_COLOR}")
+        for command, description in Constants.HELP_COMMANDS.items():
+            print('{:<25s}{:<50s}'.format(command, description))
+        print("")
 
     @staticmethod
     def connected_message(address, port):
@@ -35,3 +61,7 @@ class Constants:
     @staticmethod
     def thread_name(operation, filename):
         return f"Thr[{operation}]-{filename}"   # Thr[put]-Rute.pdf
+
+
+if __name__ == '__main__':
+    Constants.show_help()

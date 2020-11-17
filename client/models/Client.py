@@ -203,4 +203,4 @@ class Client:
         Prints to stdout a list of the known local and remote commands with a short description
         :return: None
         """
-        ...
+        Constants.show_help()
