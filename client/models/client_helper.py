@@ -13,7 +13,7 @@ class Constants:
 
     OK_STATUS_CODE = 200
     ERROR_STATUS_CODE = 500
-    INVALID_COMMAND = "Command not recognized"
+    INVALID_COMMAND = "Command not recognized. Use 'help' to show available commands"
 
     BUFFER_SIZE = 2048
     FILE_BUFFER_SIZE = 4096
@@ -61,7 +61,3 @@ class Constants:
     @staticmethod
     def thread_name(operation, filename):
         return f"Thr[{operation}]-{filename}"   # Thr[put]-Rute.pdf
-
-
-if __name__ == '__main__':
-    Constants.show_help()
