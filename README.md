@@ -206,7 +206,7 @@ In this second example, clients asks to upload apuntes.txt file located in clien
 The server will answer with a json-formatted message and here are two possible scenarios:
 
 ##### Transfer can not happen
-If client wants to upload a file that already exists in server's system or download a file that doesn't exist in server's system, server will reject said transfer request and answer a message like the one below:
+If client wants to upload a file that already exists in server's system or download a file that does not exist in server's system, server will reject said transfer request and answer a message like the one below:
 
 ```json
 {
@@ -240,25 +240,25 @@ Things to notice here:
 	- If we need to log information about who uploads and downloads what, we can generate a different token for each client and use it for that purpose.
 	- If we need to give different permissions or protect directories in the future, we can use this tokens to check if a client is allowed or not to download x file.
 
-    At the moment, this token is the same for every client and will be the same for all the server's lifecycle. But again, this can change with minimun logic.
+    At the moment, this token is the same for every client and will be the same for all the server's lifecycle. But again, this can change with minimum logic.
 
 - **Transfer port**: Server will let the client know where to ask for that transfer, this way, client doesn't need to know both ports that the server are listening to, but just the main one. The transfer port is communicated just when needed.
 
 
 ------------
 
-Assuming that the server allowed the transfer, clients just need to take that json-formatted message with the transfer metadata and connect to the given transfer port. Once the connection is stablished, the server's transfer manager will ask you for that metadata. You have 60 seconds to send it or the server is going to close the connection. 
-When you send the metadata, server will check if your token is valid. If not, it will close the connection. If it's, transfer will begin
+Assuming that the server allowed the transfer, clients just need to take that json-formatted message with the transfer metadata and connect to the given transfer port. Once the connection is established, the server's transfer manager will ask for that metadata. The client has 60 seconds to send it or the server is going to close the connection. 
+When the client sends the metadata, server will check if the token is valid. If not, it will close the connection. If it's, transfer will begin
 
 #### Transfer protocol
 Transfer protocol is quite simple once we are in this step, but it's slightly different depending if the client wants to upload or download a file.
 
-#### Download
+#### Download (get)
 
 If the client needs to download a file, server will read his transfer request (metadata) and assuming the token is valid, it will immediately start sending the file. When is done, it will close the connection. This will send an EOF to the client side of the socket but he's going to reach it just after he'd read the last byte of the file. This way, client will know when the transfer is over.
 
 
-#### Upload
+#### Upload (put)
 
 If the client needs to upload a file, server will read his transfer request (metadata) and assuming the token is valid, it will send an 8-bits start flag (**00000000**). This is to let the client know that the server is ready to receive the file. Here, the client can start sending it. If the client start sending the file before he receives this flag, the json-formatted metadata could be mixed with the first chunk of the file, and if the server is busy enough to not read the transfer request immediately, this would make it not json-decodable and the server will close the connection. The server will continue reading from the socket and writing the file, until an EOF is reached. That means that when the client is done sending the file, he should close the connection, the same way server does when he is the one sending the file. Again, server will not wait forever, assuming the client doesn't send an EOF but neither sends file information in 60 seconds, server will close the connection.
 
