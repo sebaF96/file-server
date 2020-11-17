@@ -133,7 +133,6 @@ def main() -> None:
         client_socket, address = server_socket.accept()
         process = multiprocessing.Process(target=attend_client, args=(client_socket, address, SESSION_TOKEN, transfer_port))
         process.start()
-        print(f"Active connections: {len(multiprocessing.active_children())}")
 
 
 if __name__ == '__main__':
