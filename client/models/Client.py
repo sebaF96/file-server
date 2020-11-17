@@ -20,7 +20,8 @@ class Client:
             os.chdir(os.getenv("HOME", default="/"))
 
         self.__REMOTE_COMMANDS = ['pwd', 'cd', 'ls', 'mkdir']
-        self.__COMMANDS = {'lpwd': self.lpwd, 'lls': self.lls, 'exit': self.disconnect, 'help': self.show_help, 'clear': self.clear}
+        self.__COMMANDS = {'lpwd': self.lpwd, 'lls': self.lls, 'help': self.show_help, 'clear': self.clear,
+                           'c': self.clear, 'exit': self.disconnect, 'x': self.disconnect}
         self.__COMMANDS_ARGS = {'lcd': self.lcd, 'lls': self.lls, 'lmkdir': self.lmkdir, 'get': self.get, 'put': self.put}
 
     def run(self) -> None:
