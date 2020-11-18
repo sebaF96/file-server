@@ -8,6 +8,7 @@ import multiprocessing
 import threading
 import signal
 import secrets
+import ssl
 
 
 def handle_close(s, frame) -> None:
@@ -117,11 +118,16 @@ def main() -> None:
     local_address = socket.gethostbyname(socket.getfqdn() + ".local")
     main_port, transfer_port = read_ports()
     SESSION_TOKEN = secrets.token_urlsafe(64)
+    context = ssl.SSLContext(ssl.PROTOCOL_TLS_SERVER)
+    context.load_cert_chain(certfile='/home/seb/cert.pem', keyfile='/home/seb/cert.pem')
 
     server_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     server_socket.bind(('', main_port))
+    server_socket = context.wrap_socket(server_socket, server_side=True)
+
     transfer_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     transfer_socket.bind(('', transfer_port))
+    transfer_socket = context.wrap_socket(transfer_socket, server_side=True)
 
     print(f"{src.Constants.SERVED_STARTED} {local_address}")
     print(f"{src.Constants.LISTENING_MAIN} {main_port}")
@@ -137,8 +143,10 @@ def main() -> None:
 
 if __name__ == '__main__':
     signal.signal(signal.SIGINT, handle_close)
+    main()
+    """
     try:
-        main()
+        
     except getopt.GetoptError as ge:
         print("Error:", ge)
     except ConnectionRefusedError as cre:
@@ -149,3 +157,4 @@ if __name__ == '__main__':
         print(oe)
     except AssertionError:
         print(src.Constants.PORTS_ASSERTION_ERROR)
+    """

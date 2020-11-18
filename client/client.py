@@ -4,6 +4,7 @@ import getopt
 import sys
 import models
 import socket
+import ssl
 
 
 def read_options() -> tuple:
@@ -41,8 +42,12 @@ def main() -> None:
     :return: None
     """
     address, port = read_options()
+    context = ssl.create_default_context()
+    context.load_verify_locations("/home/seb/file-server-seb.pem")
+
     client_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     client_socket.connect((address, port))
+    context.wrap_socket(client_socket, server_hostname=address)
     print(models.Constants.connected_message(address, port))
 
     client = models.Client(address, client_socket)
