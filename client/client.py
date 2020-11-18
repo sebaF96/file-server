@@ -3,6 +3,7 @@
 import getopt
 import sys
 import models
+import socket
 
 
 def read_options() -> tuple:
@@ -40,7 +41,11 @@ def main() -> None:
     :return: None
     """
     address, port = read_options()
-    client = models.Client(address, port)
+    client_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+    client_socket.connect((address, port))
+    print(models.Constants.connected_message(address, port))
+
+    client = models.Client(address, client_socket)
     client.run()
 
 

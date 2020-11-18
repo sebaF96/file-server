@@ -1,5 +1,6 @@
 from collections import defaultdict
 import datetime
+import hashlib
 
 
 class Constants:
@@ -56,4 +57,7 @@ def print_colored(color: str, message: str):
     print(f"{Constants.COLORS[color.upper()]}{message}{Constants.COLORS['RESET']}")
 
 
-
+def calculate_checksum(filepath):
+    with open(filepath, 'rb') as file:
+        checksum = hashlib.sha256(file.read())
+        return checksum.hexdigest()

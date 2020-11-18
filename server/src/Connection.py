@@ -1,6 +1,6 @@
 import os
 import json
-from .server_helper import Constants
+from .server_helper import Constants, calculate_checksum
 
 
 class Connection:
@@ -62,7 +62,7 @@ class Connection:
 
         self.__client_socket.send(json.dumps(response).encode())
 
-    def allow_transfer(self, operation: str, absolute_path: str, filesize: int = None):
+    def allow_transfer(self, operation: str, absolute_path: str, filesize: int = None, sha256sum: str = None):
         """
         Method called when a transfer request from the client is marked as valid by the server.
         It will send the transfer's metadata in a json-formatted message to the client
@@ -71,6 +71,8 @@ class Connection:
         :param absolute_path: absolute path to the file in server's system
         :param filesize: if the file is in server's system and client wants to download it, this field
         will represent the size of that file in bytes
+        :param sha256sum: sha256 file checksum, if the operation is put, it would be None
+
         :return: None
         """
         response = {
@@ -79,7 +81,8 @@ class Connection:
             "absolute_path": absolute_path,
             "filesize": filesize,
             "token": self.__secret_token,
-            "transfer_port": self.__transfers_port
+            "transfer_port": self.__transfers_port,
+            "sha256sum": sha256sum
         }
 
         self.__client_socket.send(json.dumps(response).encode())
@@ -152,7 +155,8 @@ class Connection:
         else:
             absolute_path = os.path.abspath(filename)
             filesize = os.path.getsize(filename)
-            self.allow_transfer(operation="get", absolute_path=absolute_path, filesize=filesize)
+            sha256sum = calculate_checksum(absolute_path)
+            self.allow_transfer(operation="get", absolute_path=absolute_path, filesize=filesize, sha256sum=sha256sum)
 
     def put(self, filename: str) -> None:
         """
