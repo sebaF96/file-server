@@ -10,11 +10,9 @@ class Client:
     """
     Class representing a Client connected to the main socket of a file server
     """
-    def __init__(self, address, port):
-        self.__socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-        self.__socket.connect((address, port))
+    def __init__(self, address, client_socket):
+        self.__socket = client_socket
         self.__server_address = address
-        print(Constants.connected_message(address, port))
         self.__prompt = Constants.prompt(address)
         if os.name == 'posix':
             os.chdir(os.getenv("HOME", default="/"))
@@ -95,7 +93,9 @@ class Client:
         if int(response["status_code"]) == Constants.ERROR_STATUS_CODE:
             self.show_response(response)
         elif int(response["status_code"]) == Constants.OK_STATUS_CODE:
-            transfer = FileManager(self.__server_address, response)
+            transfer_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+            transfer_socket.connect((self.__server_address, response["transfer_port"]))
+            transfer = FileManager(transfer_socket, response)
             thread_name = Constants.thread_name(operation=request['command'], filename=request['argument'])
             thread = threading.Thread(target=transfer.begin, name=thread_name)
             thread.start()

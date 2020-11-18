@@ -11,9 +11,8 @@ class FileManager:
     class is created each time that the client request for a file transfer. It will connect to the
     server's transfers socket, send the transfer metadata and start uploading/downloading the file
     """
-    def __init__(self, transfer_address, transfer_metadata):
-        self.__transfer_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-        self.__transfer_address = transfer_address
+    def __init__(self, transfer_socket, transfer_metadata):
+        self.__transfer_socket = transfer_socket
         self.__transfer_metadata = transfer_metadata
 
     def begin(self) -> None:
@@ -23,7 +22,6 @@ class FileManager:
 
         :return: None
         """
-        self.__transfer_socket.connect((self.__transfer_address, self.__transfer_metadata["transfer_port"]))
         self.__transfer_socket.send(json.dumps(self.__transfer_metadata).encode())
         if self.__transfer_metadata["operation"] == "put":
             self.__transfer_socket.recv(8)
