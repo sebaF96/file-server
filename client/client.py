@@ -43,7 +43,11 @@ def main() -> None:
     """
     address, port = read_options()
     context = ssl.create_default_context()
-    context.load_verify_locations(models.Constants.PATH_TO_CERT)
+    try:
+        context.load_verify_locations(models.Constants.PATH_TO_CERT)
+    except FileNotFoundError:
+        print(models.Constants.CERT_NOT_FOUND)
+        exit()
 
     client_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     client_socket.connect((address, port))
@@ -55,7 +59,6 @@ def main() -> None:
 
 
 if __name__ == '__main__':
-    main()
     try:
         main()
     except getopt.GetoptError as ge:

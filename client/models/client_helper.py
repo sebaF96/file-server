@@ -7,6 +7,7 @@ class Constants:
     OPT_VALUE_ERROR = "Error: Port must be an integer bigger than 1024"
     CONNECTION_REFUSED_ERROR = "There's not a file server in the given (address, port) pair"
     PATH_TO_CERT = os.getenv("HOME") + "/.file-server-seb/file-server-cert.pem"
+    CERT_NOT_FOUND = "Certify not found in " + PATH_TO_CERT
     SERVER_HOSTNAME = "file-server-seb"
 
     PROMPT_COLOR = "\033[1;36m"
