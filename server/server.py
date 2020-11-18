@@ -120,7 +120,11 @@ def main() -> None:
     main_port, transfer_port = read_ports()
     SESSION_TOKEN = secrets.token_urlsafe(64)
     context = ssl.SSLContext(ssl.PROTOCOL_TLS_SERVER)
-    context.load_cert_chain(src.Constants.PATH_TO_CERT)
+    try:
+        context.load_cert_chain(src.Constants.PATH_TO_CERT)
+    except OSError:
+        print(src.Constants.CERT_NOT_FOUND)
+        exit()
 
     server_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     server_socket.bind(('', main_port))

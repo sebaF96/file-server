@@ -31,6 +31,8 @@ class Constants:
 
     # Main
     PATH_TO_CERT = os.getenv("HOME") + "/.file-server-seb/file-server-cert.pem"
+    CERT_NOT_FOUND = "Cert chain not found in " + PATH_TO_CERT
+
     RESERVED_PORTS = "You can't use reserved ports"
     SERVED_STARTED = "File Server started at"
     LISTENING_MAIN = "Listening for connections at port"
