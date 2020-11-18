@@ -5,6 +5,7 @@ import sys
 import socket
 import src
 import multiprocessing
+import os
 import threading
 import signal
 import secrets
@@ -119,7 +120,7 @@ def main() -> None:
     main_port, transfer_port = read_ports()
     SESSION_TOKEN = secrets.token_urlsafe(64)
     context = ssl.SSLContext(ssl.PROTOCOL_TLS_SERVER)
-    context.load_cert_chain(certfile='/home/seb/cert.pem', keyfile='/home/seb/cert.pem')
+    context.load_cert_chain(src.Constants.PATH_TO_CERT)
 
     server_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     server_socket.bind(('', main_port))
@@ -136,17 +137,18 @@ def main() -> None:
     server_socket.listen(5)
 
     while True:
-        client_socket, address = server_socket.accept()
-        process = multiprocessing.Process(target=attend_client, args=(client_socket, address, SESSION_TOKEN, transfer_port))
-        process.start()
+        try:
+            client_socket, address = server_socket.accept()
+            process = multiprocessing.Process(target=attend_client, args=(client_socket, address, SESSION_TOKEN, transfer_port))
+            process.start()
+        except ssl.SSLError:
+            continue
 
 
 if __name__ == '__main__':
     signal.signal(signal.SIGINT, handle_close)
-    main()
-    """
     try:
-        
+        main()
     except getopt.GetoptError as ge:
         print("Error:", ge)
     except ConnectionRefusedError as cre:
@@ -157,4 +159,3 @@ if __name__ == '__main__':
         print(oe)
     except AssertionError:
         print(src.Constants.PORTS_ASSERTION_ERROR)
-    """

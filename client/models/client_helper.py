@@ -1,10 +1,13 @@
 import hashlib
+import os
 
 
 class Constants:
     OPT_LEN_ERROR = "Error: Expected 2 options [-a | --address] and [-p | --port]"
     OPT_VALUE_ERROR = "Error: Port must be an integer bigger than 1024"
     CONNECTION_REFUSED_ERROR = "There's not a file server in the given (address, port) pair"
+    PATH_TO_CERT = os.getenv("HOME") + "/.file-server-seb/file-server-cert.pem"
+    SERVER_HOSTNAME = "file-server-seb"
 
     PROMPT_COLOR = "\033[1;36m"
     OK_COLOR = "\033[0;92m"

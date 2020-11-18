@@ -1,6 +1,7 @@
 from collections import defaultdict
 import datetime
 import hashlib
+import os
 
 
 class Constants:
@@ -29,6 +30,7 @@ class Constants:
     FILE_BUFFER_SIZE = 4096
 
     # Main
+    PATH_TO_CERT = os.getenv("HOME") + "/.file-server-seb/file-server-cert.pem"
     RESERVED_PORTS = "You can't use reserved ports"
     SERVED_STARTED = "File Server started at"
     LISTENING_MAIN = "Listening for connections at port"

@@ -43,11 +43,11 @@ def main() -> None:
     """
     address, port = read_options()
     context = ssl.create_default_context()
-    context.load_verify_locations("/home/seb/file-server-seb.pem")
+    context.load_verify_locations(models.Constants.PATH_TO_CERT)
 
     client_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     client_socket.connect((address, port))
-    context.wrap_socket(client_socket, server_hostname=address)
+    client_socket = context.wrap_socket(client_socket, server_hostname=models.Constants.SERVER_HOSTNAME)
     print(models.Constants.connected_message(address, port))
 
     client = models.Client(address, client_socket)
@@ -55,6 +55,7 @@ def main() -> None:
 
 
 if __name__ == '__main__':
+    main()
     try:
         main()
     except getopt.GetoptError as ge:
