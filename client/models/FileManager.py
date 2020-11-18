@@ -1,8 +1,7 @@
-import socket
 import os
 import json
 import tqdm
-from .client_helper import Constants
+from .client_helper import Constants, calculate_checksum
 
 
 class FileManager:
@@ -22,14 +21,15 @@ class FileManager:
 
         :return: None
         """
-        self.__transfer_socket.send(json.dumps(self.__transfer_metadata).encode())
         if self.__transfer_metadata["operation"] == "put":
+            self.__transfer_metadata["sha256sum"] = calculate_checksum(os.path.basename(self.__transfer_metadata["absolute_path"]))
+            self.__transfer_socket.send(json.dumps(self.__transfer_metadata).encode())
             self.__transfer_socket.recv(8)
             self.send_file()
-            print(Constants.FILE_UPLOADED)
+            #  print(Constants.FILE_UPLOADED)
         elif self.__transfer_metadata["operation"] == "get":
+            self.__transfer_socket.send(json.dumps(self.__transfer_metadata).encode())
             self.get_file()
-            print(Constants.FILE_DOWNLOADED)
 
     def send_file(self):
         """
@@ -77,3 +77,15 @@ class FileManager:
                 progress.update(len(bytes_read))
 
             progress.close()
+
+        print("Calculating checksum... ", end='')
+        is_authentic = calculate_checksum(filename) == self.__transfer_metadata["sha256sum"]
+
+        if is_authentic:
+            print("OK")
+            print(Constants.FILE_DOWNLOADED)
+
+        else:
+            print("CORRUPTED FILE")
+            os.remove(filename)
+            print("Download failed. Try again")

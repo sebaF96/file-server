@@ -1,6 +1,7 @@
 import socket
 import json
-from .server_helper import print_colored, Constants
+import os
+from .server_helper import print_colored, Constants, calculate_checksum
 
 
 class Transfer:
@@ -78,5 +79,10 @@ class Transfer:
                     break
                 file.write(bytes_read)
 
+        is_authentic = calculate_checksum(file_path) == transfer_request["sha256sum"]
+        if is_authentic:
             print_colored(color="YELLOW", message=f"{Constants.date_time()} RECEIVED {file_path} from {self.__client_address}")
-            self.__transfer_socket.close()
+        else:
+            os.remove(file_path)
+
+

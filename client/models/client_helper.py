@@ -1,3 +1,4 @@
+import hashlib
 
 
 class Constants:
@@ -61,3 +62,9 @@ class Constants:
     @staticmethod
     def thread_name(operation, filename):
         return f"Thr[{operation}]-{filename}"   # Thr[put]-Rute.pdf
+
+
+def calculate_checksum(filepath):
+    with open(filepath, 'rb') as file:
+        checksum = hashlib.sha256(file.read())
+        return checksum.hexdigest()
