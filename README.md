@@ -3,6 +3,7 @@
 
 - Communications over TCP using Python's low-level networking interface [socket][socket]
 - Remote commands runs in server side and its output is sent to the client
+- Secure and encrypted communications using TLS protocol
 - Server will always answer a status code with a message, and the standard output (if any)
 - Server is able to attend multiple clients at the same time using multiprocessing
 ------------
@@ -19,7 +20,9 @@
 ------------
 
 ## Install
-To install and run this program you'll need python3, pip3, python3-venv and a couple of dependencies.
+To install and run this program you'll need python3, pip3, python3-venv and a couple of dependencies. You'll also need
+OpenSSL version 1.0.1 or higher, but it comes pre-installed on all modern Unix systems, Windows, Mac OS X, and probably additional platforms.
+This installation guide assumes that you already have it.
 
 Install python3, pip3 and python3-venv
 
@@ -34,14 +37,41 @@ $ git clone https://github.com/sebaF96/file-server.git file-server
 $ cd file-server && python3 -m venv venv
 ```
 
-Finally, using your recently created venv, install the project dependencies
+Next, using your recently created venv, install the project dependencies
 
 ```shell
 $ source venv/bin/activate
 (venv) $ pip3 install -r requirements.txt
 ```
 
-You're good to go now.
+File Server is ready to run now. However, if you're using v2.0 or higher, you'll need an SSL Certificate and a Private Key
+in server side, stored in the same file. This .pem file should look like this
+
+```
+-----BEGIN RSA PRIVATE KEY-----
+... (private key in base64 encoding) ...
+-----END RSA PRIVATE KEY-----
+-----BEGIN CERTIFICATE-----
+... (certificate in base64 PEM encoding) ...
+-----END CERTIFICATE-----
+```
+
+You can work with self-signed certificates as well. If you dont have a certificate, you can generate
+ one very quickly using OpenSSL. We recommend you to read [OpenSSL Documentation][openssldocs]
+
+Once you've got your Certificate and Private Key stored in a .pem file, you have to load the path
+to said file in an .env file. This file should be in the root-level of the project and should look like this:
+
+```shell
+PATH_TO_CERT=/absolute/path/to/cert.pem
+HOST_NAME=your-host-name
+```
+
+If you're using a self-signed Certificate, you have to provide the Client(s) with said certificate as well,
+and also generate a .env file with the path to it and your hostname.
+
+
+At this point, you're good to go.
 
 ------------
 
@@ -264,3 +294,4 @@ If the client needs to upload a file, server will read his transfer request (met
 
 
 [socket]: https://docs.python.org/3.8/library/socket.html "socket"
+[openssldocs]: https://www.openssl.org/docs/ "openssldocs"
