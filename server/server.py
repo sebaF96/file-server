@@ -100,10 +100,13 @@ def listen_for_transfers(transfer_socket, transfer_port: int, SESSION_TOKEN: str
     print(f"{src.Constants.LISTENING_TRANSFERS} {transfer_port}")
     transfer_socket.listen(5)
     while True:
-        client_socket, address = transfer_socket.accept()
-        thr = threading.Thread(target=attend_transfer, args=(client_socket, address, SESSION_TOKEN))
-        thr.start()
-        del client_socket
+        try:
+            client_socket, address = transfer_socket.accept()
+            thr = threading.Thread(target=attend_transfer, args=(client_socket, address, SESSION_TOKEN))
+            thr.start()
+            del client_socket
+        except ssl.SSLError:
+            continue
 
 
 def main() -> None:
@@ -127,10 +130,12 @@ def main() -> None:
         exit()
 
     server_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+    server_socket.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
     server_socket.bind(('', main_port))
     server_socket = context.wrap_socket(server_socket, server_side=True)
 
     transfer_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+    transfer_socket.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
     transfer_socket.bind(('', transfer_port))
     transfer_socket = context.wrap_socket(transfer_socket, server_side=True)
 
