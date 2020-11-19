@@ -1,1 +1,6 @@
+certifi==2020.11.8
+cffi==1.14.3
+pycparser==2.20
+python-dotenv==0.15.0
+six==1.15.0
 tqdm==4.52.0

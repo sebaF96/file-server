@@ -1,5 +1,4 @@
 import hashlib
-import os
 
 
 class Constants:

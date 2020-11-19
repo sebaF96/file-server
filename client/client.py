@@ -9,6 +9,22 @@ import os
 from dotenv import load_dotenv
 
 
+def load_cert() -> None:
+    """
+    First function called on client run. It would search for a .env file containing
+    the path to a SSL cert-chain file. If the file is missing, program will end
+
+    :return: None
+    """
+    load_dotenv()
+    if os.getenv("PATH_TO_CERT") is None:
+        print(models.Constants.MISSING_DOTENV)
+        exit()
+    elif not os.path.isfile(os.getenv("PATH_TO_CERT")):
+        print(models.Constants.CERT_NOT_FOUND)
+        exit()
+
+
 def read_options() -> tuple:
     """
     Reads command-line options looking for address and port number to connect to, in case that one
@@ -36,13 +52,6 @@ def read_options() -> tuple:
     return address, port
 
 
-def load_cert() -> None:
-    load_dotenv()
-    if os.getenv("PATH_TO_CERT") is None:
-        print(models.Constants.MISSING_DOTENV)
-        exit()
-
-
 def main() -> None:
     """
     Main client function, it will read command-line, create a models.Client instance
@@ -54,12 +63,7 @@ def main() -> None:
     address, port = read_options()
     context = ssl.create_default_context()
     context.check_hostname = False
-
-    try:
-        context.load_verify_locations(os.getenv("PATH_TO_CERT"))
-    except FileNotFoundError:
-        print(models.Constants.CERT_NOT_FOUND)
-        exit()
+    context.load_verify_locations(os.getenv("PATH_TO_CERT"))
 
     client_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     client_socket.connect((address, port))

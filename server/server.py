@@ -4,12 +4,29 @@ import getopt
 import sys
 import socket
 import src
-import multiprocessing
 import os
+import multiprocessing
 import threading
 import signal
 import secrets
 import ssl
+from dotenv import load_dotenv
+
+
+def load_cert() -> None:
+    """
+    First function called on server run. It would search for a .env file containing
+    the path to a SSL cert-chain file. If the file is missing, program will end
+
+    :return: None
+    """
+    load_dotenv()
+    if os.getenv("PATH_TO_CERT") is None:
+        print(src.Constants.MISSING_DOTENV)
+        exit()
+    elif not os.path.isfile(os.getenv("PATH_TO_CERT")):
+        print(src.Constants.CERT_NOT_FOUND)
+        exit()
 
 
 def handle_close(s, frame) -> None:
@@ -124,9 +141,9 @@ def main() -> None:
     SESSION_TOKEN = secrets.token_urlsafe(64)
     context = ssl.SSLContext(ssl.PROTOCOL_TLS_SERVER)
     try:
-        context.load_cert_chain(src.Constants.PATH_TO_CERT)
-    except OSError:
-        print(src.Constants.CERT_NOT_FOUND)
+        context.load_cert_chain(os.getenv("PATH_TO_CERT"))
+    except ssl.SSLError:
+        print(src.Constants.INVALID_CERT_CHAIN)
         exit()
 
     server_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
@@ -155,9 +172,11 @@ def main() -> None:
 
 
 if __name__ == '__main__':
+    load_cert()
     signal.signal(signal.SIGINT, handle_close)
+    main()
     try:
-        main()
+        pass
     except getopt.GetoptError as ge:
         print("Error:", ge)
     except ConnectionRefusedError as cre:
