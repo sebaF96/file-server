@@ -57,7 +57,15 @@ in server side, stored in the same file. This .pem file should look like this
 ```
 
 You can work with self-signed certificates as well. If you dont have a certificate, you can generate
- one very quickly using OpenSSL. We recommend you to read [OpenSSL Documentation][openssldocs]
+one very quickly using OpenSSL. The command to create a self-signed certificate is the following:
+
+```shell
+$ openssl req -new -x509 -days 365 -nodes -out file-server-cert.pem -keyout file-server-cert.pem
+```
+
+It will then prompt you for information like "Country Name", you can fill this information or just press Enter and accept the defaults.
+
+We recommend you to read [OpenSSL Documentation][openssldocs]
 
 Once you've got your Certificate and Private Key stored in a .pem file, you have to load the path
 to said file in an .env file. This file should be in the root-level of the project and should look like this:
