@@ -6,9 +6,8 @@ class Constants:
     OPT_LEN_ERROR = "Error: Expected 2 options [-a | --address] and [-p | --port]"
     OPT_VALUE_ERROR = "Error: Port must be an integer bigger than 1024"
     CONNECTION_REFUSED_ERROR = "There's not a file server in the given (address, port) pair"
-    PATH_TO_CERT = os.getenv("HOME") + "/.file-server-seb/file-server-cert.pem"
-    CERT_NOT_FOUND = "Certify not found in " + PATH_TO_CERT
-    SERVER_HOSTNAME = "file-server-seb"
+    CERT_NOT_FOUND = "Certificate not found"
+    MISSING_DOTENV = "Missing .env file with PATH_TO_CERT and HOST_NAME variables"
 
     PROMPT_COLOR = "\033[1;36m"
     OK_COLOR = "\033[0;92m"

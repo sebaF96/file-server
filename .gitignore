@@ -5,3 +5,4 @@ server/__pycache__/*
 server/src/__pycache__/*
 client/models/__pycache__/*
 *.pyc
+.env

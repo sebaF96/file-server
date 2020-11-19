@@ -5,6 +5,8 @@ import sys
 import models
 import socket
 import ssl
+import os
+from dotenv import load_dotenv
 
 
 def read_options() -> tuple:
@@ -34,6 +36,13 @@ def read_options() -> tuple:
     return address, port
 
 
+def load_variables() -> None:
+    load_dotenv()
+    if os.getenv("PATH_TO_CERT") is None or os.getenv("HOST_NAME") is None:
+        print(models.Constants.MISSING_DOTENV)
+        exit()
+
+
 def main() -> None:
     """
     Main client function, it will read command-line, create a models.Client instance
@@ -41,17 +50,18 @@ def main() -> None:
 
     :return: None
     """
+    load_variables()
     address, port = read_options()
     context = ssl.create_default_context()
     try:
-        context.load_verify_locations(models.Constants.PATH_TO_CERT)
+        context.load_verify_locations(os.getenv("PATH_TO_CERT"))
     except FileNotFoundError:
         print(models.Constants.CERT_NOT_FOUND)
         exit()
 
     client_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     client_socket.connect((address, port))
-    client_socket = context.wrap_socket(client_socket, server_hostname=models.Constants.SERVER_HOSTNAME)
+    client_socket = context.wrap_socket(client_socket, server_hostname=os.getenv("HOST_NAME"))
     print(models.Constants.connected_message(address, port))
 
     client = models.Client(address, client_socket, context)
