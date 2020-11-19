@@ -54,7 +54,7 @@ def main() -> None:
     client_socket = context.wrap_socket(client_socket, server_hostname=models.Constants.SERVER_HOSTNAME)
     print(models.Constants.connected_message(address, port))
 
-    client = models.Client(address, client_socket)
+    client = models.Client(address, client_socket, context)
     client.run()
 
 
