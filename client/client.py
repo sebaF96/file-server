@@ -36,9 +36,9 @@ def read_options() -> tuple:
     return address, port
 
 
-def load_variables() -> None:
+def load_cert() -> None:
     load_dotenv()
-    if os.getenv("PATH_TO_CERT") is None or os.getenv("HOST_NAME") is None:
+    if os.getenv("PATH_TO_CERT") is None:
         print(models.Constants.MISSING_DOTENV)
         exit()
 
@@ -50,9 +50,11 @@ def main() -> None:
 
     :return: None
     """
-    load_variables()
+
     address, port = read_options()
     context = ssl.create_default_context()
+    context.check_hostname = False
+
     try:
         context.load_verify_locations(os.getenv("PATH_TO_CERT"))
     except FileNotFoundError:
@@ -61,7 +63,7 @@ def main() -> None:
 
     client_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     client_socket.connect((address, port))
-    client_socket = context.wrap_socket(client_socket, server_hostname=os.getenv("HOST_NAME"))
+    client_socket = context.wrap_socket(client_socket)
     print(models.Constants.connected_message(address, port))
 
     client = models.Client(address, client_socket, context)
@@ -69,6 +71,7 @@ def main() -> None:
 
 
 if __name__ == '__main__':
+    load_cert()
     try:
         main()
     except getopt.GetoptError as ge:

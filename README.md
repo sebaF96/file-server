@@ -64,11 +64,10 @@ to said file in an .env file. This file should be in the root-level of the proje
 
 ```shell
 PATH_TO_CERT=/absolute/path/to/cert.pem
-HOST_NAME=your-host-name
 ```
 
 If you're using a self-signed Certificate, you have to provide the Client(s) with said certificate as well,
-and also generate a .env file with the path to it and your hostname.
+and also generate a .env file with the path to it.
 
 
 At this point, you're good to go.
