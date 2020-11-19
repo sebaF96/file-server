@@ -1,11 +1,13 @@
 # File server
+
 #### Python client-server program that allows you to send and receive files to and from the server
 
-- Communications over TCP using Python's low-level networking interface [socket][socket]
-- Remote commands runs in server side and its output is sent to the client
-- Secure and encrypted communications using TLS protocol
-- Server will always answer a status code with a message, and the standard output (if any)
-- Server is able to attend multiple clients at the same time using multiprocessing
+- :electric_plug: Communications over TCP using Python's low-level networking interface [socket][socket]
+- :closed_lock_with_key: Secure and encrypted communications using TLS protocol
+- :heavy_check_mark: Both Server and Client will verify the checksum of a received file to make sure is not corrupted
+- :satellite: Remote commands runs in Server side and its output is sent to the Client
+- :ok: Server will always answer a status code with a message, and the standard output (if any)
+- :octopus: Server is able to attend multiple Clients at the same time using multiprocessing
 ------------
 
 
