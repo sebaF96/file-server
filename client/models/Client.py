@@ -95,7 +95,7 @@ class Client:
             self.show_response(response)
         elif int(response["status_code"]) == Constants.OK_STATUS_CODE:
             transfer_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-            transfer_socket = self.__context.wrap_socket(transfer_socket, server_hostname=Constants.SERVER_HOSTNAME)
+            transfer_socket = self.__context.wrap_socket(transfer_socket)
             transfer_socket.connect((self.__server_address, response["transfer_port"]))
             transfer = FileManager(transfer_socket, response)
             thread_name = Constants.thread_name(operation=request['command'], filename=request['argument'])

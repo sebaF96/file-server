@@ -18,8 +18,12 @@ class Constants:
     ERROR_STATUS_CODE = 500
     INVALID_COMMAND = "Command not recognized. Use 'help' to show available commands"
 
-    BUFFER_SIZE = 2048
+    BUFFER_SIZE = 4096
     FILE_BUFFER_SIZE = 4096
+
+    CALCULATING_CHECKSUM = "Calculating checksum..."
+    OK_MESSAGE = "OK"
+    INVALID_CHECKSUM = "CORRUPTED FILE\nDownload failed. Try again"
     FILE_UPLOADED = "File successfully uploaded"
     FILE_DOWNLOADED = "File successfully downloaded"
 

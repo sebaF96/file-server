@@ -78,14 +78,13 @@ class FileManager:
 
             progress.close()
 
-        print("Calculating checksum... ", end='')
+        print(Constants.CALCULATING_CHECKSUM, end='')
         is_authentic = calculate_checksum(filename) == self.__transfer_metadata["sha256sum"]
 
         if is_authentic:
-            print("OK")
+            print(Constants.OK_MESSAGE)
             print(Constants.FILE_DOWNLOADED)
 
         else:
-            print("CORRUPTED FILE")
+            print(Constants.INVALID_CHECKSUM)
             os.remove(filename)
-            print("Download failed. Try again")
