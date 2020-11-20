@@ -162,9 +162,7 @@ class Client:
             output = os.listdir(directory) if directory else os.listdir()
             content = None if len(output) == 0 else "\n".join(output)
             print(content)
-        except FileNotFoundError:
-            print(Constants.DIRECTORY_NOT_FOUND)
-        except NotADirectoryError:
+        except (FileNotFoundError, NotADirectoryError):
             print(Constants.DIRECTORY_NOT_FOUND)
 
     @staticmethod

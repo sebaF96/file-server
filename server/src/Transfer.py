@@ -34,10 +34,7 @@ class Transfer:
             elif transfer_request["operation"] == "put":
                 self.__transfer_socket.send(Constants.READY_FLAG)
                 self.receive_file(transfer_request)
-        except socket.timeout:
-            self.__transfer_socket.close()
-            return
-        except json.decoder.JSONDecodeError:
+        except (socket.timeout, json.decoder.JSONDecodeError):
             self.__transfer_socket.close()
             return
 

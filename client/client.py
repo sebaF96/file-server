@@ -78,13 +78,9 @@ if __name__ == '__main__':
     load_cert()
     try:
         main()
-    except getopt.GetoptError as ge:
-        print("Error:", ge)
+    except (getopt.GetoptError, ValueError, OSError, Exception) as e:
+        print("Error:", e)
     except AssertionError:
         print(models.Constants.OPT_LEN_ERROR)
-    except ValueError as ve:
-        print(ve)
     except ConnectionRefusedError:
         print(models.Constants.CONNECTION_REFUSED_ERROR)
-    except OSError as oe:
-        print(oe)

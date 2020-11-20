@@ -109,9 +109,7 @@ class Connection:
             content = None if len(output) == 0 else "\n".join(output)
 
             self.send_response(Constants.OK_STATUS_CODE, Constants.OK_MESSAGE, content)
-        except FileNotFoundError:
-            self.send_response(Constants.ERROR_STATUS_CODE, Constants.DIRECTORY_DOESNT_EXISTS)
-        except NotADirectoryError:
+        except (FileNotFoundError, NotADirectoryError):
             self.send_response(Constants.ERROR_STATUS_CODE, Constants.DIRECTORY_DOESNT_EXISTS)
 
     def cd(self, directory: str) -> None:

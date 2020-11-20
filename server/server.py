@@ -76,13 +76,7 @@ def perform_handshake(accepted_socket: ssl.SSLSocket) -> None:
     try:
         accepted_socket.do_handshake()
         accepted_socket.settimeout(None)
-    except socket.timeout:
-        accepted_socket.close()
-        exit(0)
-    except ssl.SSLError:
-        accepted_socket.close()
-        exit(0)
-    except OSError:
+    except (socket.timeout, ssl.SSLError, OSError):
         accepted_socket.close()
         exit(0)
 
@@ -147,7 +141,7 @@ def listen_for_transfers(transfer_socket, transfer_port: int, SESSION_TOKEN: str
             thr = threading.Thread(target=attend_transfer, args=(client_socket, address, SESSION_TOKEN))
             thr.start()
             del client_socket
-        except ssl.SSLError:
+        except (ssl.SSLError, OSError, Exception):
             continue
 
 
@@ -193,9 +187,7 @@ def main() -> None:
             process = multiprocessing.Process(target=attend_client, args=(client_socket, address, SESSION_TOKEN, transfer_port))
             process.start()
             del client_socket
-        except ssl.SSLError:
-            continue
-        except OSError:
+        except (ssl.SSLError, OSError, Exception):
             continue
 
 
@@ -204,13 +196,9 @@ if __name__ == '__main__':
     signal.signal(signal.SIGINT, handle_close)
     try:
         main()
-    except getopt.GetoptError as ge:
-        print("Error:", ge)
-    except ConnectionRefusedError as cre:
-        print("Error:", cre)
+    except (getopt.GetoptError, ConnectionResetError, OSError, Exception) as e:
+        print("Error:", e)
     except ValueError:
         print(src.Constants.PORTS_VALUE_ERROR)
-    except OSError as oe:
-        print(oe)
     except AssertionError:
         print(src.Constants.PORTS_ASSERTION_ERROR)
