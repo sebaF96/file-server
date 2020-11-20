@@ -79,6 +79,12 @@ def perform_handshake(accepted_socket: ssl.SSLSocket) -> None:
     except socket.timeout:
         accepted_socket.close()
         exit(0)
+    except ssl.SSLError:
+        accepted_socket.close()
+        exit(0)
+    except OSError:
+        accepted_socket.close()
+        exit(0)
 
 
 def attend_client(client_socket, address: str, SESSION_TOKEN: str, transfers_port: int) -> None:
