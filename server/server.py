@@ -174,9 +174,8 @@ def main() -> None:
 if __name__ == '__main__':
     load_cert()
     signal.signal(signal.SIGINT, handle_close)
-    main()
     try:
-        pass
+        main()
     except getopt.GetoptError as ge:
         print("Error:", ge)
     except ConnectionRefusedError as cre:
