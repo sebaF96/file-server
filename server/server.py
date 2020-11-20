@@ -64,6 +64,23 @@ def read_ports() -> tuple:
     return port, transfer_port
 
 
+def perform_handshake(accepted_socket: ssl.SSLSocket) -> None:
+    """
+    Tries to perform a TLS handshake, if handshake don't succeed in 25 seconds, it closes the
+    connection
+
+    :param accepted_socket: SSLSocket object wrapping an accepted client socket
+    :return: None
+    """
+    accepted_socket.settimeout(src.Constants.HANDSHAKE_TIMEOUT_SECONDS)
+    try:
+        accepted_socket.do_handshake()
+        accepted_socket.settimeout(None)
+    except socket.timeout:
+        accepted_socket.close()
+        exit(0)
+
+
 def attend_client(client_socket, address: str, SESSION_TOKEN: str, transfers_port: int) -> None:
     """
     Handler for a client connection to the main port. It creates a Connection instance and call
@@ -76,6 +93,7 @@ def attend_client(client_socket, address: str, SESSION_TOKEN: str, transfers_por
     file transfers
     :return: None
     """
+    perform_handshake(client_socket)
     src.print_colored(color="GREEN", message=f"{src.Constants.date_time()} Got a connection from {address}")
     conn = src.Connection(client_socket, address, SESSION_TOKEN, transfers_port)
     try:
@@ -96,6 +114,7 @@ def attend_transfer(client_socket, address: str, SESSION_TOKEN: str) -> None:
     token and compare it with this one before sending or receiving any file
     :return: None
     """
+    perform_handshake(client_socket)
     try:
         transfer = src.Transfer(client_socket, address, SESSION_TOKEN)
         transfer.begin()
@@ -149,12 +168,12 @@ def main() -> None:
     server_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     server_socket.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
     server_socket.bind(('', main_port))
-    server_socket = context.wrap_socket(server_socket, server_side=True)
+    server_socket = context.wrap_socket(server_socket, server_side=True, do_handshake_on_connect=False)
 
     transfer_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     transfer_socket.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
     transfer_socket.bind(('', transfer_port))
-    transfer_socket = context.wrap_socket(transfer_socket, server_side=True)
+    transfer_socket = context.wrap_socket(transfer_socket, server_side=True, do_handshake_on_connect=False)
 
     print(f"{src.Constants.SERVED_STARTED} {local_address}")
     print(f"{src.Constants.LISTENING_MAIN} {main_port}")
@@ -167,7 +186,10 @@ def main() -> None:
             client_socket, address = server_socket.accept()
             process = multiprocessing.Process(target=attend_client, args=(client_socket, address, SESSION_TOKEN, transfer_port))
             process.start()
+            del client_socket
         except ssl.SSLError:
+            continue
+        except OSError:
             continue
 
 
