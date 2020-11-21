@@ -35,9 +35,9 @@ class Client:
             user_input = input(self.__prompt).split()
             if not user_input:
                 continue
-            has_argument = len(user_input) == 2
+            has_argument = len(user_input) >= 2
             command = user_input[0]
-            argument = user_input[1] if has_argument else None
+            argument = " ".join(user_input[1:]) if has_argument else None
 
             if command in self.__REMOTE_COMMANDS:
                 self.communicate(command, argument)
