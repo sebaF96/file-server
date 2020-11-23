@@ -19,8 +19,8 @@ PROCESSES_LIST = []
 
 def joiner():
     while True:
+        time.sleep(60 * 2)
         global PROCESSES_LIST
-        time.sleep(60 * 3)
 
         for p in PROCESSES_LIST:
             if p.is_alive():
