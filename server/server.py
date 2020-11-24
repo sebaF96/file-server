@@ -210,9 +210,9 @@ def main() -> None:
 
 
 if __name__ == '__main__':
-    threading.Thread(target=joiner, daemon=True).start()
     load_cert()
     signal.signal(signal.SIGINT, handle_close)
+    threading.Thread(target=joiner, daemon=True).start()
     try:
         main()
     except (getopt.GetoptError, ConnectionResetError, OSError, Exception) as e:
