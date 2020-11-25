@@ -66,7 +66,7 @@ def read_ports() -> tuple:
 
 def perform_handshake(accepted_socket: ssl.SSLSocket) -> None:
     """
-    Tries to perform a TLS handshake, if handshake don't succeed in 25 seconds, it closes the
+    Tries to perform a TLS handshake, if handshake don't succeed in 10 seconds, it closes the
     connection
 
     :param accepted_socket: SSLSocket object wrapping an accepted client socket

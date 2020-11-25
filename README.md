@@ -286,7 +286,7 @@ Things to notice here:
 
 ------------
 
-Assuming that the server allowed the transfer, clients just need to take that json-formatted message with the transfer metadata and connect to the given transfer port. Once the connection is established, the server's transfer manager will ask for that metadata. The client has 60 seconds to send it or the server is going to close the connection. 
+Assuming that the server allowed the transfer, clients just need to take that json-formatted message with the transfer metadata and connect to the given transfer port. Once the connection is established, the server's transfer manager will ask for that metadata. The client has 15 seconds to send it or the server is going to close the connection. 
 When the client sends the metadata, server will check if the token is valid. If not, it will close the connection. If it's, transfer will begin
 
 #### Transfer protocol
