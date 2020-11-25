@@ -41,8 +41,8 @@ class Constants:
     PORTS_ASSERTION_ERROR = "Main port and Transfer port can not be the same"
 
     READY_FLAG = b'10101010'
-    TRANSFERS_TIMEOUT_SECONDS = 60
-    HANDSHAKE_TIMEOUT_SECONDS = 25
+    TRANSFERS_TIMEOUT_SECONDS = 15
+    HANDSHAKE_TIMEOUT_SECONDS = 10
 
     @staticmethod
     def date_time():

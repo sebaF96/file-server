@@ -1,6 +1,7 @@
 import os
 import json
 import tqdm
+from socket import timeout
 from .client_helper import Constants, calculate_checksum
 
 
@@ -66,16 +67,19 @@ class FileManager:
         """
         filesize = int(self.__transfer_metadata["filesize"])
         filename = os.path.basename(self.__transfer_metadata["absolute_path"])
+        self.__transfer_socket.settimeout(Constants.TRANSFER_TIMEOUT_SECONDS)
 
         progress = tqdm.tqdm(range(filesize), f"Receiving {filename}", unit="B", unit_scale=True, unit_divisor=1024)
         with open(filename, "wb") as file:
             while True:
-                bytes_read = self.__transfer_socket.recv(Constants.FILE_BUFFER_SIZE)
-                if not bytes_read:
+                try:
+                    bytes_read = self.__transfer_socket.recv(Constants.FILE_BUFFER_SIZE)
+                    if not bytes_read:
+                        break
+                    file.write(bytes_read)
+                    progress.update(len(bytes_read))
+                except timeout:
                     break
-                file.write(bytes_read)
-                progress.update(len(bytes_read))
-
             progress.close()
 
         print(Constants.CALCULATING_CHECKSUM, end='')

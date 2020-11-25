@@ -20,6 +20,7 @@ class Constants:
 
     BUFFER_SIZE = 4096
     FILE_BUFFER_SIZE = 4096
+    TRANSFER_TIMEOUT_SECONDS = 4
 
     CALCULATING_CHECKSUM = "Calculating checksum..."
     OK_MESSAGE = "OK"

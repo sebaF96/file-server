@@ -266,7 +266,8 @@ If the server allows the transfer, it will answer a json-formatted message with 
   "absolute_path": "home/server/Documents/Rute.pdf",
   "filesize": 5378210,
   "token": "eoyBUrfKYGrwQOqVCxeXQTwwuPeBiCVLe_AZ56f1...",
-  "transfer_port": 3000
+  "transfer_port": 3000,
+  "sha256sum": "88441e22b097db05dbb17a28b452a37168a2..."
 }
 ```
 
@@ -282,11 +283,11 @@ Things to notice here:
     At the moment, this token is the same for every client and will be the same for all the server's lifecycle. But again, this can change with minimum logic.
 
 - **Transfer port**: Server will let the client know where to ask for that transfer, this way, client doesn't need to know both ports that the server are listening to, but just the main one. The transfer port is communicated just when needed.
-
+- **SHA256 checksum**: sha256 checksum of the file. 64 bytes hexadecimal token representing the sha256 hash of the whole file. This can be used to check if the file was transmitted without errors. Both the client and the server will compare this checksum when the transfer is over, and if it doesn't match, they will delete the just received file
 
 ------------
 
-Assuming that the server allowed the transfer, clients just need to take that json-formatted message with the transfer metadata and connect to the given transfer port. Once the connection is established, the server's transfer manager will ask for that metadata. The client has 60 seconds to send it or the server is going to close the connection. 
+Assuming that the server allowed the transfer, clients just need to take that json-formatted message with the transfer metadata and connect to the given transfer port. Once the connection is established, the server's transfer manager will ask for that metadata. The client has 15 seconds to send it or the server is going to close the connection. 
 When the client sends the metadata, server will check if the token is valid. If not, it will close the connection. If it's, transfer will begin
 
 #### Transfer protocol
