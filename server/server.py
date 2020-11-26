@@ -17,19 +17,6 @@ import time
 PROCESSES_LIST = []
 
 
-def joiner():
-    while True:
-        time.sleep(60 * 2)
-        global PROCESSES_LIST
-
-        for p in PROCESSES_LIST:
-            if p.is_alive():
-                continue
-            else:
-                p.join()
-                PROCESSES_LIST.remove(p)
-
-
 def load_cert() -> None:
     """
     First function called on server run. It would search for a .env file containing
@@ -56,6 +43,20 @@ def handle_close(s, frame) -> None:
     """
     print(src.Constants.EXITING)
     exit(0)
+
+
+def joiner() -> None:
+    """
+    Recurrent background task dedicated to join finished processes
+    """
+    while True:
+        time.sleep(src.Constants.JOINER_INTERVAL_SECONDS)
+        global PROCESSES_LIST
+        for p in PROCESSES_LIST:
+            if p.is_alive():
+                continue
+            p.join()
+            PROCESSES_LIST.remove(p)
 
 
 def read_ports() -> tuple:

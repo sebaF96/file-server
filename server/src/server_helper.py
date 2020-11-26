@@ -43,6 +43,7 @@ class Constants:
     READY_FLAG = b'10101010'
     TRANSFERS_TIMEOUT_SECONDS = 15
     HANDSHAKE_TIMEOUT_SECONDS = 10
+    JOINER_INTERVAL_SECONDS = 60 * 5
 
     @staticmethod
     def date_time():
