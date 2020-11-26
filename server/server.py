@@ -11,6 +11,10 @@ import signal
 import secrets
 import ssl
 from dotenv import load_dotenv
+import time
+
+
+PROCESSES_LIST = []
 
 
 def load_cert() -> None:
@@ -39,6 +43,20 @@ def handle_close(s, frame) -> None:
     """
     print(src.Constants.EXITING)
     exit(0)
+
+
+def joiner() -> None:
+    """
+    Recurrent background task dedicated to join finished processes
+    """
+    while True:
+        time.sleep(src.Constants.JOINER_INTERVAL_SECONDS)
+        global PROCESSES_LIST
+        for p in PROCESSES_LIST:
+            if p.is_alive():
+                continue
+            p.join()
+            PROCESSES_LIST.remove(p)
 
 
 def read_ports() -> tuple:
@@ -186,6 +204,7 @@ def main() -> None:
             client_socket, address = server_socket.accept()
             process = multiprocessing.Process(target=attend_client, args=(client_socket, address, SESSION_TOKEN, transfer_port))
             process.start()
+            PROCESSES_LIST.append(process)
             del client_socket
         except (ssl.SSLError, OSError, Exception):
             continue
@@ -194,6 +213,7 @@ def main() -> None:
 if __name__ == '__main__':
     load_cert()
     signal.signal(signal.SIGINT, handle_close)
+    threading.Thread(target=joiner, daemon=True).start()
     try:
         main()
     except (getopt.GetoptError, ConnectionResetError, OSError, Exception) as e:
