@@ -27,7 +27,7 @@ class FileManager:
             self.__transfer_socket.send(json.dumps(self.__transfer_metadata).encode())
             self.__transfer_socket.recv(8)
             self.send_file()
-            #  print(Constants.FILE_UPLOADED)
+            print(Constants.FILE_UPLOADED)
         elif self.__transfer_metadata["operation"] == "get":
             self.__transfer_socket.send(json.dumps(self.__transfer_metadata).encode())
             self.get_file()
