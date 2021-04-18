@@ -80,7 +80,8 @@ if __name__ == '__main__':
         main()
     except ConnectionRefusedError:
         print(models.Constants.CONNECTION_REFUSED_ERROR)
-    except (getopt.GetoptError, ValueError, OSError, Exception) as e:
-        print("Error:", e)
     except AssertionError:
         print(models.Constants.OPT_LEN_ERROR)
+    except (getopt.GetoptError, ValueError, OSError, Exception) as e:
+        print("Error:", e)
+
